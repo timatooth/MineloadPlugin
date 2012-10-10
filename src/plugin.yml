@@ -1,0 +1,9 @@
+name: MineloadPlugin
+version: 0.0.1
+description: Provide performance data access to web or other application.
+
+author: timatooth_teeth
+website: http://forgottendynasties.net
+
+main: com.gmail.timaaarrreee.mineload.MineloadPlugin
+depend: [LagMeter]
