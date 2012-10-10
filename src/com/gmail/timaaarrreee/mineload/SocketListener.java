@@ -17,8 +17,7 @@ public class SocketListener extends Thread {
   //to indicate the server to stop
   boolean keepRunning = true;
 
-  public SocketListener(Plugin plugin) {
-    int listenPort = 25500; //TODO fix hard coding
+  public SocketListener(Plugin plugin, int listenPort) {
 
     try {
       Bukkit.getLogger().log(Level.INFO, "Starting Mineload XML Service on port {0}", listenPort);

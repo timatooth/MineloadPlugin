@@ -1,11 +1,18 @@
 *.class
+<<<<<<< HEAD
 manifest.mf
+=======
+
+>>>>>>> 6b61222f06ebd830c595ce1a30cabaee327b8878
 # Package Files #
 *.jar
 *.war
 *.ear
+<<<<<<< HEAD
 
 #netbeans generated files
 nbproject/
 dist/
 build/
+=======
+>>>>>>> 6b61222f06ebd830c595ce1a30cabaee327b8878
