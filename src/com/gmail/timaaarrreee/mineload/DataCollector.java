@@ -2,6 +2,7 @@ package com.gmail.timaaarrreee.mineload;
 
 import com.webkonsept.minecraft.lagmeter.LagMeter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
@@ -10,10 +11,6 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-/**
- *
- * @author tim
- */
 public class DataCollector {
 
   private float tps;
@@ -29,29 +26,26 @@ public class DataCollector {
   private long memMax;
   private long totalPlayers; //all the players that have ever joined
   private String motd;
-  
 
   /**
    * Populates all the data fields with the state of the server.
    */
   public DataCollector() {
     server = Bukkit.getServer();
+    maxPlayers = server.getMaxPlayers();
+    serverPort = server.getPort();
+    serverAddress = Bukkit.getServerName();
+    motd = server.getMotd();
+    loadPlugins();
 
   }
 
   public void update() {
     loadTPS();
     loadPlayers();
-    loadPlugins();
     loadMemory();
     loadWorlds();
     playerCount = server.getOnlinePlayers().length;
-    maxPlayers = server.getMaxPlayers();
-    serverPort = server.getPort();
-    serverAddress = Bukkit.getServerName();
-    motd = server.getMotd();
-    
-    
   }
 
   /**
@@ -79,32 +73,26 @@ public class DataCollector {
    */
   private void loadPlayers() {
     players.clear();
-    Player[] playerList = server.getOnlinePlayers();
-    for (Player p : playerList) {
-      players.add(p);
-    }
-    
+    players.addAll(Arrays.asList(server.getOnlinePlayers()));
+
     //update total ever joined
     totalPlayers = server.getOfflinePlayers().length;
   }
 
   private void loadPlugins() {
     plugins.clear();
-    Plugin[] pluginList = server.getPluginManager().getPlugins();
-    for (Plugin p : pluginList) {
-      plugins.add(p);
-    }
+    plugins.addAll(Arrays.asList(server.getPluginManager().getPlugins()));
   }
 
   private void loadMemory() {
     memUsed = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1048576;
     memMax = Runtime.getRuntime().maxMemory() / 1048576;
   }
-  
-  private void loadWorlds(){
+
+  private void loadWorlds() {
     worlds.clear();
     List<World> worldList = server.getWorlds();
-    for(World w : worldList){
+    for (World w : worldList) {
       worlds.add(w);
     }
   }
@@ -116,8 +104,8 @@ public class DataCollector {
   public ArrayList<Plugin> getPlugins() {
     return plugins;
   }
-  
-  public ArrayList<World> getWorlds(){
+
+  public ArrayList<World> getWorlds() {
     return worlds;
   }
 
@@ -133,20 +121,20 @@ public class DataCollector {
   public int getPlayerCount() {
     return playerCount;
   }
-  
-  public long getMemoryUsed(){
+
+  public long getMemoryUsed() {
     return memUsed;
   }
-  
-  public long getMaxMemory(){
+
+  public long getMaxMemory() {
     return memMax;
   }
-  
-  public long getTotalPlayers(){
+
+  public long getTotalPlayers() {
     return totalPlayers;
   }
-  
-  public String getMotd(){
+
+  public String getMotd() {
     return motd;
   }
 }

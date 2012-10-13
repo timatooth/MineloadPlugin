@@ -2,8 +2,6 @@ package com.gmail.timaaarrreee.mineload;
 
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -31,12 +29,11 @@ import org.yaml.snakeyaml.Yaml;
  */
 public class XmlFeed {
 
-  private DataCollector data;
   private String xmlData;
 
-  public XmlFeed(DataCollector dc) {
+  public XmlFeed() {
     long startTime = System.currentTimeMillis();
-    data = dc;
+    DataCollector data = MineloadPlugin.getData();
     //
     DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
     DocumentBuilder docBuilder = null;
@@ -106,13 +103,16 @@ public class XmlFeed {
 
       Map<String, Object> config = (Map<String, Object>) yaml.load(is);
       plugin.setAttribute("version", config.get("version").toString());
-      if(config.containsKey("author")){
+      if (config.containsKey("author")) {
         plugin.setAttribute("author", config.get("author").toString());
-      }if(config.containsKey("authors")){
+      }
+      if (config.containsKey("authors")) {
         plugin.setAttribute("author", config.get("authors").toString().replace("[", "").replace("]", ""));
-      }if(config.containsKey("description")){
+      }
+      if (config.containsKey("description")) {
         plugin.setAttribute("description", config.get("description").toString());
-      }if(config.containsKey("website")){
+      }
+      if (config.containsKey("website")) {
         plugin.setAttribute("website", config.get("website").toString());
       }
     }
@@ -121,7 +121,6 @@ public class XmlFeed {
     Element players = doc.createElement("players");
     for (Player s : data.getPlayers()) {
       Element player = doc.createElement("player");
-      //player.appendChild(doc.createTextNode(s.getName()));
       player.setAttribute("world", s.getWorld().getName());
       player.setAttribute("ip", s.getAddress().getAddress().getHostAddress());
 
@@ -134,7 +133,7 @@ public class XmlFeed {
       player.setAttribute("gamemode", s.getGameMode().toString());
       player.setAttribute("health", String.valueOf(s.getHealth()));
       player.setAttribute("name", s.getName());
-      player.setAttribute("displayname", s.getDisplayName());
+      player.setAttribute("displayname", s.getDisplayName().replaceAll("\u00a7", "&amp;"));
 
       Element inventory = doc.createElement("inventory");
       PlayerInventory inven = s.getInventory();

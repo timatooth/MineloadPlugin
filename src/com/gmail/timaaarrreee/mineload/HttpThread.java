@@ -32,11 +32,10 @@ class HttpThread implements Runnable {
 
   @Override
   public void run() {
-
+    
     try {
       in = new BufferedReader(new InputStreamReader(server.getInputStream()));
       out = new PrintStream(server.getOutputStream());
-      String message = MineloadPlugin.getXmlData();
       while ((line = in.readLine()) != null) {
         if (line.substring(0, 3).equalsIgnoreCase("get")) {
           //populate the map with keys from the request.
@@ -48,7 +47,8 @@ class HttpThread implements Runnable {
             sendError(500);
           }
           String tryPass = get_query.get("password");
-          if (tryPass.equals(MineloadPlugin.getPassword())) {
+          if (tryPass != null && tryPass.equals(MineloadPlugin.getPassword())) {
+            String message = new XmlFeed().getXmlData();
             //now reward them with the xml
             if (message != null) {
               out.println("HTTP/1.1 200 OK");

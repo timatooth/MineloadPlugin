@@ -5,15 +5,12 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
 public class SocketListener extends Thread {
 
-  ServerSocket server;
-  private int maxConnections = 20;
-  private int currentConnections = 0;
+  private ServerSocket server;
   //to indicate the server to stop
   boolean keepRunning = true;
 
