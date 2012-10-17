@@ -159,6 +159,7 @@ public class XmlFeed {
     for (World s : data.getWorlds()) {
       Element world = doc.createElement("world");
       world.appendChild(doc.createTextNode(s.getName()));
+      world.setAttribute("players", String.valueOf(s.getPlayers().size()));
       world.setAttribute("time", String.valueOf(s.getTime()));
       world.setAttribute("type", s.getWorldType().toString());
       world.setAttribute("difficulty", s.getDifficulty().toString());

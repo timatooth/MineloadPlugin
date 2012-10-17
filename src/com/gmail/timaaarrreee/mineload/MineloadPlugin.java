@@ -21,7 +21,9 @@ public class MineloadPlugin extends JavaPlugin {
     accessPassword = getConfig().getString("password");
     listenPort = getConfig().getInt("socket.port");
     data = new DataCollector();
-    Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new ServerPoller(data), 80, 40);
+    getServer().getScheduler().scheduleSyncRepeatingTask(this, new ServerPoller(data), 80, 40);
+    //TODO implement own tps collection
+    //getServer().getScheduler().scheduleSyncRepeatingTask(this, new TickPoller(this), 0, 40);
     
     //start up the webserver thread.
     getLogger().log(Level.INFO, "Starting webserver thread...");
