@@ -6,10 +6,11 @@ manifest.mf
 *.jar
 *.war
 *.ear
-<<<<<<< HEAD
 
 #netbeans generated files
 nbproject/
 dist/
 build/
-=======
+
+#maven
+target/
