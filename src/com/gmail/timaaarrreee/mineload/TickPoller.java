@@ -1,27 +1,37 @@
 package com.gmail.timaaarrreee.mineload;
 
+import java.util.LinkedList;
 import java.util.logging.Level;
 
 public class TickPoller implements Runnable {
 
-  private MineloadPlugin plugin;
-  private long lastPoll = System.currentTimeMillis() - 3000;
-
-  public TickPoller(MineloadPlugin plugin) {
-    this.plugin = plugin;
-  }
+  private LinkedList<Float> history = new LinkedList<Float>();
+  private long lastPoll = System.currentTimeMillis();
 
   @Override
   public void run() {
-    long now = System.currentTimeMillis();
-    long timeSpent = (now - lastPoll) / 1000;
-    //avoid division by zero
+    final long currentTime = System.currentTimeMillis();
+    long timeSpent = (currentTime - lastPoll) / 1000;
     if (timeSpent == 0) {
       timeSpent = 1;
     }
-    //float tps = plugin.interval/timeSpent;
-    float tps = 40 / timeSpent;
-    //TODO finish.
-    lastPoll = now;
+    if (history.size() > 10) {
+      history.remove();
+    }
+    final float tps = 100f / timeSpent;
+    if (tps <= 20) {
+      history.add(tps);
+    }
+    lastPoll = currentTime;
+  }
+
+  public float getAverageTPS() {
+    float avg = 0;
+    for (Float f : history) {
+      if (f != null) {
+        avg += f;
+      }
+    }
+    return avg / history.size();
   }
 }

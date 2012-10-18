@@ -1,6 +1,5 @@
 package com.gmail.timaaarrreee.mineload;
 
-import com.webkonsept.minecraft.lagmeter.LagMeter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -13,6 +12,7 @@ import org.bukkit.plugin.Plugin;
 
 public class DataCollector {
 
+  private MineloadPlugin plugin;
   private float tps;
   private int playerCount;
   private int maxPlayers;
@@ -30,7 +30,8 @@ public class DataCollector {
   /**
    * Populates all the data fields with the state of the server.
    */
-  public DataCollector() {
+  public DataCollector(MineloadPlugin plugin) {
+    this.plugin = plugin;
     server = Bukkit.getServer();
     maxPlayers = server.getMaxPlayers();
     serverPort = server.getPort();
@@ -41,7 +42,7 @@ public class DataCollector {
   }
 
   public void update() {
-    loadTPS();
+    tps = plugin.getTickPoller().getAverageTPS();
     loadPlayers();
     loadMemory();
     loadWorlds();
@@ -52,21 +53,6 @@ public class DataCollector {
    * Sync method called every "poll.time" ticks by the bukkit thread. It
    * collects the data to be presented to the server socket.
    */
-  /**
-   * Uses the LagMeter plugin to get the Ticks Per Second
-   *
-   * @return
-   */
-  private void loadTPS() {
-    try {
-      LagMeter lm;
-      lm = (LagMeter) Bukkit.getServer().getPluginManager().getPlugin("LagMeter");
-      tps = lm.getTPS();
-    } catch (Exception e) {
-      Bukkit.getLogger().log(Level.WARNING, "Could not get TPS. Is LagMeter installed?");
-    }
-
-  }
 
   /**
    * fills up array list of each players name.

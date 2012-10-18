@@ -1,29 +1,45 @@
 package com.gmail.timaaarrreee.mineload;
 
-import com.webkonsept.minecraft.lagmeter.LagMeter;
+
 import java.util.logging.Level;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class MineloadPlugin extends JavaPlugin {
-  protected LagMeter lagmeter;
   //data of current server state is stored here
   private static DataCollector data;
   private static String xmlData;
   private static String accessPassword;
   private SocketListener server;
   private int listenPort;
+  private ServerPoller serverPoller;
+  private TickPoller tickPoller;
+  private static long heartBeatTime;
+  private static long tickTime;
+  
+  
   
   @Override
   public void onEnable() {
+    heartBeatTime = System.currentTimeMillis();
     loadConfig();
     
     accessPassword = getConfig().getString("password");
     listenPort = getConfig().getInt("socket.port");
-    data = new DataCollector();
-    getServer().getScheduler().scheduleSyncRepeatingTask(this, new ServerPoller(data), 80, 40);
-    //TODO implement own tps collection
-    //getServer().getScheduler().scheduleSyncRepeatingTask(this, new TickPoller(this), 0, 40);
+    data = new DataCollector(this);
+    serverPoller = new ServerPoller(data);
+    tickPoller = new TickPoller();
+    
+    getServer().getScheduler().scheduleSyncRepeatingTask(this, serverPoller, 80, 40);
+    getServer().getScheduler().scheduleSyncRepeatingTask(this, tickPoller, 1, 100);
+    
+    getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable(){
+      @Override
+      public void run() {
+        long old = heartBeatTime;
+        heartBeatTime = System.currentTimeMillis();
+        tickTime = heartBeatTime - old;
+      }
+    }, 1, 20);
     
     //start up the webserver thread.
     getLogger().log(Level.INFO, "Starting webserver thread...");
@@ -33,11 +49,14 @@ public class MineloadPlugin extends JavaPlugin {
   
   @Override
   public void onDisable(){
+    getServer().getScheduler().cancelAllTasks();
+    serverPoller = null;
+    tickPoller = null;
     server.disable();
   }
   
   
-
+  
   @Override
   public void reloadConfig() {
     super.reloadConfig();
@@ -78,4 +97,27 @@ public class MineloadPlugin extends JavaPlugin {
     return accessPassword;
   }
   
+  public TickPoller getTickPoller(){
+    return tickPoller;
+  }
+
+
+/**
+ * Ticks per second doesn't seem very useful at alerting you when 
+ * the server main thread has come to a *complete* halt.
+ * 
+ * Considering that the HttpThread doesn't die, it can compare the
+ * last time.
+ */
+  public static long getHeartbeatTime(){
+    return heartBeatTime;
+  }
+  
+  /**
+   * Time it tooke to complete one tick.
+   * @return 
+   */
+  public static long getTickTime(){
+    return tickTime;
+  }
 }

@@ -51,11 +51,13 @@ class HttpThread implements Runnable {
             String message = new XmlFeed().getXmlData();
             //now reward them with the xml
             if (message != null) {
+              long lastContactMainThread = System.currentTimeMillis() - MineloadPlugin.getHeartbeatTime();
               out.println("HTTP/1.1 200 OK");
               out.println("Cache-Control: no-cache");
               out.println("Content-Length: " + message.length());
               out.println("Content-Type: text/xml");
-              out.println("Server: MineloadPlugin (" + Bukkit.getBukkitVersion() + ")");
+              out.println("Server: MineloadPlugin (" + Bukkit.getVersion() + ")");
+              out.println("X-Mineload-Heartbeat: " + lastContactMainThread);
               out.println();
               out.println(message);
               server.close();

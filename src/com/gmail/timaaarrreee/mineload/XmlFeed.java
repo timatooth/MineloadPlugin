@@ -32,6 +32,7 @@ public class XmlFeed {
   private String xmlData;
 
   public XmlFeed() {
+    long lastContactMainThread = System.currentTimeMillis() - MineloadPlugin.getHeartbeatTime();
     long startTime = System.currentTimeMillis();
     DataCollector data = MineloadPlugin.getData();
     //
@@ -98,6 +99,7 @@ public class XmlFeed {
       plugin.appendChild(doc.createTextNode(s.getName()));
       plugin.setAttribute("enabled", String.valueOf(s.isEnabled()));
       plugins.appendChild(plugin);
+      //TODO change this to use PluginDescriptionFile objects. Wish I knew about them earlier.
       InputStream is = s.getResource("plugin.yml");
       Yaml yaml = new Yaml();
 
@@ -175,6 +177,12 @@ public class XmlFeed {
     Element tps = doc.createElement("tps");
     tps.appendChild(doc.createTextNode(String.valueOf(data.getTPS())));
     rootElement.appendChild(tps);
+    
+    Element heartbeat = doc.createElement("heartbeat");
+    heartbeat.appendChild(doc.createTextNode(String.valueOf(lastContactMainThread)));
+    heartbeat.setAttribute("ticktime", String.valueOf(MineloadPlugin.getTickTime()));
+    rootElement.appendChild(heartbeat);
+    
     double timeTaken = System.currentTimeMillis() - startTime;
     Element time = doc.createElement("generated");
     time.appendChild(doc.createTextNode(String.valueOf(timeTaken)));
