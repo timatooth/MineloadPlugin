@@ -26,6 +26,7 @@ public class DataCollector {
   private long memMax;
   private long totalPlayers; //all the players that have ever joined
   private String motd;
+  private NetworkData network;
 
   /**
    * Populates all the data fields with the state of the server.
@@ -37,6 +38,7 @@ public class DataCollector {
     serverPort = server.getPort();
     serverAddress = Bukkit.getServerName();
     motd = server.getMotd();
+    network = new NetworkData();
     loadPlugins();
 
   }
@@ -47,6 +49,7 @@ public class DataCollector {
     loadMemory();
     loadWorlds();
     playerCount = server.getOnlinePlayers().length;
+    //TODO network = new NetworkData();
   }
 
   /**

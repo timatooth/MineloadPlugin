@@ -15,7 +15,7 @@ public class SocketListener extends Thread {
   boolean keepRunning = true;
 
   public SocketListener(Plugin plugin, int listenPort) {
-
+    this.setName("Mineload Socket Thread");
     try {
       Bukkit.getLogger().log(Level.INFO, "Starting Mineload XML Service on port {0}", listenPort);
       server = new ServerSocket(listenPort);

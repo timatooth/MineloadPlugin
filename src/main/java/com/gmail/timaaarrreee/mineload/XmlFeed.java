@@ -2,6 +2,7 @@ package com.gmail.timaaarrreee.mineload;
 
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.util.Iterator;
 import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -94,15 +95,14 @@ public class XmlFeed {
 
     //display plugins
     Element plugins = doc.createElement("plugins");
-    for (Plugin s : data.getPlugins()) {
+    for (Iterator<Plugin> it = data.getPlugins().iterator(); it.hasNext();) {
+      Plugin eachPlugin = it.next();
       Element plugin = doc.createElement("plugin");
-      plugin.appendChild(doc.createTextNode(s.getName()));
-      plugin.setAttribute("enabled", String.valueOf(s.isEnabled()));
+      plugin.appendChild(doc.createTextNode(eachPlugin.getName()));
+      plugin.setAttribute("enabled", String.valueOf(eachPlugin.isEnabled()));
       plugins.appendChild(plugin);
-      //TODO change this to use PluginDescriptionFile objects. Wish I knew about them earlier.
-      InputStream is = s.getResource("plugin.yml");
+      InputStream is = eachPlugin.getResource("plugin.yml");
       Yaml yaml = new Yaml();
-
       Map<String, Object> config = (Map<String, Object>) yaml.load(is);
       plugin.setAttribute("version", config.get("version").toString());
       if (config.containsKey("author")) {
@@ -121,24 +121,23 @@ public class XmlFeed {
     rootElement.appendChild(plugins);
 
     Element players = doc.createElement("players");
-    for (Player s : data.getPlayers()) {
+    for (Iterator<Player> it = data.getPlayers().iterator(); it.hasNext();) {
+      Player eachPlayer = it.next();
       Element player = doc.createElement("player");
-      player.setAttribute("world", s.getWorld().getName());
-      player.setAttribute("ip", s.getAddress().getAddress().getHostAddress());
-
-      player.setAttribute("xyz", String.valueOf(s.getLocation().getBlockX())
-              + "," + String.valueOf(s.getLocation().getBlockY())
-              + "," + String.valueOf(s.getLocation().getBlockZ()));
-      player.setAttribute("inhand", s.getItemInHand().getType().toString());
-      player.setAttribute("allowedflight", String.valueOf(s.getAllowFlight()));
-      player.setAttribute("op", String.valueOf(s.isOp()));
-      player.setAttribute("gamemode", s.getGameMode().toString());
-      player.setAttribute("health", String.valueOf(s.getHealth()));
-      player.setAttribute("name", s.getName());
-      player.setAttribute("displayname", s.getDisplayName().replaceAll("\u00a7", "&amp;"));
-
+      player.setAttribute("world", eachPlayer.getWorld().getName());
+      player.setAttribute("ip", eachPlayer.getAddress().getAddress().getHostAddress());
+      player.setAttribute("xyz", String.valueOf(eachPlayer.getLocation().getBlockX())
+              + "," + String.valueOf(eachPlayer.getLocation().getBlockY())
+              + "," + String.valueOf(eachPlayer.getLocation().getBlockZ()));
+      player.setAttribute("inhand", eachPlayer.getItemInHand().getType().toString());
+      player.setAttribute("allowedflight", String.valueOf(eachPlayer.getAllowFlight()));
+      player.setAttribute("op", String.valueOf(eachPlayer.isOp()));
+      player.setAttribute("gamemode", eachPlayer.getGameMode().toString());
+      player.setAttribute("health", String.valueOf(eachPlayer.getHealth()));
+      player.setAttribute("name", eachPlayer.getName());
+      player.setAttribute("displayname", eachPlayer.getDisplayName().replaceAll("\u00a7", "&amp;"));
       Element inventory = doc.createElement("inventory");
-      PlayerInventory inven = s.getInventory();
+      PlayerInventory inven = eachPlayer.getInventory();
       for (int i = 0; i < inven.getSize(); i++) {
         if (inven.getItem(i) != null) {
           ItemStack is = inven.getItem(i);
@@ -150,26 +149,23 @@ public class XmlFeed {
           inventory.appendChild(item);
         }
       }
-
       player.appendChild(inventory);
-
       players.appendChild(player);
     }
     rootElement.appendChild(players);
 
     Element worlds = doc.createElement("worlds");
-    for (World s : data.getWorlds()) {
+    for (Iterator<World> it = data.getWorlds().iterator(); it.hasNext();) {
+      World eachWorld = it.next();
       Element world = doc.createElement("world");
-      world.appendChild(doc.createTextNode(s.getName()));
-      world.setAttribute("players", String.valueOf(s.getPlayers().size()));
-      world.setAttribute("time", String.valueOf(s.getTime()));
-      world.setAttribute("type", s.getWorldType().toString());
-      world.setAttribute("difficulty", s.getDifficulty().toString());
-      world.setAttribute("seed", String.valueOf(s.getSeed()));
-      world.setAttribute("entities", String.valueOf(s.getEntities().size()));
-      world.setAttribute("moblimit", String.valueOf(s.getMonsterSpawnLimit()));
-
-
+      world.appendChild(doc.createTextNode(eachWorld.getName()));
+      world.setAttribute("players", String.valueOf(eachWorld.getPlayers().size()));
+      world.setAttribute("time", String.valueOf(eachWorld.getTime()));
+      world.setAttribute("type", eachWorld.getWorldType().toString());
+      world.setAttribute("difficulty", eachWorld.getDifficulty().toString());
+      world.setAttribute("seed", String.valueOf(eachWorld.getSeed()));
+      world.setAttribute("entities", String.valueOf(eachWorld.getEntities().size()));
+      world.setAttribute("moblimit", String.valueOf(eachWorld.getMonsterSpawnLimit()));
       worlds.appendChild(world);
     }
     rootElement.appendChild(worlds);
@@ -177,12 +173,12 @@ public class XmlFeed {
     Element tps = doc.createElement("tps");
     tps.appendChild(doc.createTextNode(String.valueOf(data.getTPS())));
     rootElement.appendChild(tps);
-    
+
     Element heartbeat = doc.createElement("heartbeat");
     heartbeat.appendChild(doc.createTextNode(String.valueOf(lastContactMainThread)));
     heartbeat.setAttribute("ticktime", String.valueOf(MineloadPlugin.getTickTime()));
     rootElement.appendChild(heartbeat);
-    
+
     double timeTaken = System.currentTimeMillis() - startTime;
     Element time = doc.createElement("generated");
     time.appendChild(doc.createTextNode(String.valueOf(timeTaken)));
