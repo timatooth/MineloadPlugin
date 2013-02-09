@@ -1,9 +1,6 @@
 package com.gmail.timaaarrreee.mineload;
 
-import java.io.InputStream;
 import java.io.StringWriter;
-import java.util.Iterator;
-import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -12,14 +9,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.plugin.Plugin;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.yaml.snakeyaml.Yaml;
 
 /**
  *
@@ -92,7 +83,11 @@ public class XmlFeed {
     Element bukkitversion = doc.createElement("bukkitversion");
     bukkitversion.appendChild(doc.createTextNode(Bukkit.getBukkitVersion()));
     rootElement.appendChild(bukkitversion);
-
+    
+    /*
+     * All this code might not be 'thread safe'. Disabling it for now. Will use JSONAPI
+     * in the web interface. Its much easier.
+     * 
     //display plugins
     Element plugins = doc.createElement("plugins");
     for (Iterator<Plugin> it = data.getPlugins().iterator(); it.hasNext();) {
@@ -101,6 +96,7 @@ public class XmlFeed {
       plugin.appendChild(doc.createTextNode(eachPlugin.getName()));
       plugin.setAttribute("enabled", String.valueOf(eachPlugin.isEnabled()));
       plugins.appendChild(plugin);
+      //TODO: change to use plugin description class. less error prone.
       InputStream is = eachPlugin.getResource("plugin.yml");
       Yaml yaml = new Yaml();
       Map<String, Object> config = (Map<String, Object>) yaml.load(is);
@@ -119,7 +115,9 @@ public class XmlFeed {
       }
     }
     rootElement.appendChild(plugins);
-
+    */
+    
+    /*
     Element players = doc.createElement("players");
     for (Iterator<Player> it = data.getPlayers().iterator(); it.hasNext();) {
       Player eachPlayer = it.next();
@@ -153,9 +151,11 @@ public class XmlFeed {
       players.appendChild(player);
     }
     rootElement.appendChild(players);
-
+    */
+    
+    /*
     Element worlds = doc.createElement("worlds");
-    for (Iterator<World> it = data.getWorlds().iterator(); it.hasNext();) {
+    for (Iterator<World> it = Bukkit.getWorlds().iterator(); it.hasNext();) {
       World eachWorld = it.next();
       Element world = doc.createElement("world");
       world.appendChild(doc.createTextNode(eachWorld.getName()));
@@ -169,7 +169,8 @@ public class XmlFeed {
       worlds.appendChild(world);
     }
     rootElement.appendChild(worlds);
-
+    */
+    
     Element tps = doc.createElement("tps");
     tps.appendChild(doc.createTextNode(String.valueOf(data.getTPS())));
     rootElement.appendChild(tps);
@@ -178,7 +179,15 @@ public class XmlFeed {
     heartbeat.appendChild(doc.createTextNode(String.valueOf(lastContactMainThread)));
     heartbeat.setAttribute("ticktime", String.valueOf(MineloadPlugin.getTickTime()));
     rootElement.appendChild(heartbeat);
-
+    
+    Element tx = doc.createElement("tx");
+    tx.appendChild(doc.createTextNode(String.valueOf(data.getNetwork().getTx())));
+    rootElement.appendChild(tx);
+    
+    Element rx = doc.createElement("rx");
+    rx.appendChild(doc.createTextNode(String.valueOf(data.getNetwork().getRx())));
+    rootElement.appendChild(rx);
+    
     double timeTaken = System.currentTimeMillis() - startTime;
     Element time = doc.createElement("generated");
     time.appendChild(doc.createTextNode(String.valueOf(timeTaken)));

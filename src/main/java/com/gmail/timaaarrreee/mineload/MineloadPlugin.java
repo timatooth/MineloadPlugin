@@ -29,7 +29,7 @@ public class MineloadPlugin extends JavaPlugin {
 
     getServer().getScheduler().scheduleSyncRepeatingTask(this, serverPoller, 80, 40);
     getServer().getScheduler().scheduleSyncRepeatingTask(this, tickPoller, 1, 100);
-
+    
     getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
       @Override
       public void run() {
@@ -62,10 +62,6 @@ public class MineloadPlugin extends JavaPlugin {
     server.disable();
   }
 
-  @Override
-  public void reloadConfig() {
-    super.reloadConfig();
-  }
 
   private void loadConfig() {
     getConfig().options().copyDefaults(true);
