@@ -93,7 +93,6 @@ public class NetworkData {
         }
         //ignore the loopback interface
         if (!firstchunk[0].equals("lo")) {
-          System.out.println(firstchunk.length);
           received += Long.parseLong(data[1]);
           transmitted += Long.parseLong(data[9]);
         }
