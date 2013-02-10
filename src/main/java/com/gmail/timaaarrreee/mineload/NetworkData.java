@@ -1,6 +1,6 @@
 /**
- * This class aims to collect network bytes transmitted, received and the rates
- * in KB/s for each platform. Edit: decided not to calculate rates here.
+ * This class aims to collect network bytes transmitted & received on
+ * the servers network interface.
  *
  * @author Tim Sullivan
  */
@@ -13,13 +13,17 @@ public class NetworkData {
 
   private long transmitted;
   private long received;
+  private static boolean debug;
 
   public NetworkData() {
+    debug = MineloadPlugin.debug();
     update();
   }
 
   private void processWindows() {
-    //TODO
+    if(debug){
+      System.out.println("Windows network traffic tracking is not supported yet.");
+    }
   }
 
   private void processMac() {
@@ -28,7 +32,7 @@ public class NetworkData {
     received = 0;
     String result = cmdExec("netstat -ib");
     String[] lines = result.split("\n");
-    for (int i = 0; i < lines.length; i++) {
+    for (int i = 0; i <= lines.length; i++) {
       StringTokenizer st = new StringTokenizer(lines[i]);
       //ignore the first line (contains column names)
       if (i > 0) {
@@ -52,6 +56,10 @@ public class NetworkData {
     }
   }
 
+  /**
+   * Gets the output of the kernels network interface file
+   * and parses it.
+   */
   private void processLinux() {
     transmitted = 0;
     received = 0;
@@ -59,6 +67,10 @@ public class NetworkData {
     try{
       result = fileToString(new File("/proc/net/dev"));
     } catch (IOException ioe){
+      if(debug){
+        System.out.println("Mineload Debug: error opening /proc/net/dev");
+        ioe.printStackTrace();
+      }
       return;
     }
     String[] lines = result.split("\n");
@@ -73,12 +85,22 @@ public class NetworkData {
           x++;
         }
         String[] firstchunk = data[0].split(":");
+        if(debug){
+          System.out.println("Debug: parsing net segments. array length is " + firstchunk.length);
+          for(int j = 0; j < data.length; ++j){
+            System.out.println("j: " + j + ": " + data[j]);
+          }
+        }
         //ignore the loopback interface
         if (!firstchunk[0].equals("lo")) {
-          received += Long.parseLong(firstchunk[1]);
-          transmitted += Long.parseLong(data[8]);
+          System.out.println(firstchunk.length);
+          received += Long.parseLong(data[1]);
+          transmitted += Long.parseLong(data[9]);
         }
       }
+    }
+    if(debug){
+      System.out.println("Mineload Debug: Network TX: " + this.transmitted + " RX: " + this.received);
     }
   }
 
@@ -116,16 +138,16 @@ public class NetworkData {
   public final void update() {
     String os = System.getProperty("os.name").toLowerCase();
     if (isWindows(os)) {
-      //grr
       processWindows();
     } else if (isLinux(os)) {
-      //yay
       processLinux();
     } else if (isMac(os)) {
-      //grr
       processMac();
     } else {
-      //wtf...
+      if(debug){
+        System.out.println("Unknown OS detected, can't read network data");
+        System.out.println(System.getProperty("os.name"));
+      }
     }
   }
 

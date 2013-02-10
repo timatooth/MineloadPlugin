@@ -15,6 +15,7 @@ public class MineloadPlugin extends JavaPlugin {
   private TickPoller tickPoller;
   private static long heartBeatTime;
   private static long tickTime;
+  private static boolean debug;
 
   @Override
   public void onEnable() {
@@ -23,6 +24,7 @@ public class MineloadPlugin extends JavaPlugin {
 
     accessPassword = getConfig().getString("password");
     listenPort = getConfig().getInt("socket.port");
+    debug = getConfig().getBoolean("debug");
     data = new DataCollector(this);
     serverPoller = new ServerPoller(data);
     tickPoller = new TickPoller();
@@ -75,6 +77,7 @@ public class MineloadPlugin extends JavaPlugin {
     getConfig().addDefault("socket.port", 25500);
     //getConfig().addDefault("polling.interval", "40");
     getConfig().addDefault("password", "changemenow539");
+    getConfig().addDefault("debug", "false");
     saveConfig();
   }
 
@@ -121,5 +124,14 @@ public class MineloadPlugin extends JavaPlugin {
    */
   public static long getTickTime() {
     return tickTime;
+  }
+  
+  /**
+   * Returns true if debugging is enabled
+   * 
+   * @return boolean debug
+   */
+  public static boolean debug(){
+    return debug;
   }
 }
