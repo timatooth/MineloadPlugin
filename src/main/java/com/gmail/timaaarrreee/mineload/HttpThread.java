@@ -20,14 +20,15 @@ class HttpThread implements Runnable {
 
   private Socket server;
   private String line;
-  //I decided to process the GET query string properly.
   private Map<String, String> get_query = new HashMap<String, String>();
   private BufferedReader in;
   private PrintStream out;
 
   public HttpThread(Socket server) {
     this.server = server;
-    //Bukkit.getLogger().log(Level.INFO, "Got Mineload connection from: {0}", server.getInetAddress());
+    if(MineloadPlugin.debug()){
+      Bukkit.getLogger().log(Level.INFO, "Got Mineload connection from: {0}", server.getInetAddress());
+    }
   }
 
   @Override
@@ -49,21 +50,19 @@ class HttpThread implements Runnable {
           String tryPass = get_query.get("password");
           if (tryPass != null && tryPass.equals(MineloadPlugin.getPassword())) {
             String message = new XmlFeed().getXmlData();
-            //now reward them with the xml
-            if (message != null) {
-              long lastContactMainThread = System.currentTimeMillis() - MineloadPlugin.getHeartbeatTime();
+            
+            if (message != null || message.length() < 1) {
               out.println("HTTP/1.1 200 OK");
               out.println("Cache-Control: no-cache");
               out.println("Content-Length: " + message.length());
               out.println("Content-Type: text/xml");
               out.println("Server: MineloadPlugin (" + Bukkit.getVersion() + ")");
-              out.println("X-Mineload-Heartbeat: " + lastContactMainThread);
               out.println();
               out.println(message);
-              server.close();
+              server.close();              
             } else {
               sendError(503);
-            }
+            }            
           } else {
             sendError(406);
           }
@@ -90,10 +89,10 @@ class HttpThread implements Runnable {
       for (String param : query.split("&")) {
         String pair[] = param.split("=");
         String key = URLDecoder.decode(pair[0], "UTF-8");
-        String value = "";
+        String value;
         if (pair.length > 1) {
           value = URLDecoder.decode(pair[1], "UTF-8");
-          //cut off the extra HTTP/1.1 but
+          //cut off the extra HTTP/1.1 bit
           value = value.split("HTTP")[0].trim();
           get_query.put(key, value);
         }

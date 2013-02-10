@@ -1,6 +1,7 @@
 package com.gmail.timaaarrreee.mineload;
 
 import java.io.StringWriter;
+import java.util.logging.Level;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -33,6 +34,8 @@ public class XmlFeed {
     try {
       docBuilder = docFactory.newDocumentBuilder();
     } catch (ParserConfigurationException ex) {
+      Bukkit.getLogger().log(Level.SEVERE, "Couldn't load the DOM builder.");
+      ex.printStackTrace();
     }
 
     // root elements
@@ -83,94 +86,7 @@ public class XmlFeed {
     Element bukkitversion = doc.createElement("bukkitversion");
     bukkitversion.appendChild(doc.createTextNode(Bukkit.getBukkitVersion()));
     rootElement.appendChild(bukkitversion);
-    
-    /*
-     * All this code might not be 'thread safe'. Disabling it for now. Will use JSONAPI
-     * in the web interface. Its much easier.
-     * 
-    //display plugins
-    Element plugins = doc.createElement("plugins");
-    for (Iterator<Plugin> it = data.getPlugins().iterator(); it.hasNext();) {
-      Plugin eachPlugin = it.next();
-      Element plugin = doc.createElement("plugin");
-      plugin.appendChild(doc.createTextNode(eachPlugin.getName()));
-      plugin.setAttribute("enabled", String.valueOf(eachPlugin.isEnabled()));
-      plugins.appendChild(plugin);
-      //TODO: change to use plugin description class. less error prone.
-      InputStream is = eachPlugin.getResource("plugin.yml");
-      Yaml yaml = new Yaml();
-      Map<String, Object> config = (Map<String, Object>) yaml.load(is);
-      plugin.setAttribute("version", config.get("version").toString());
-      if (config.containsKey("author")) {
-        plugin.setAttribute("author", config.get("author").toString());
-      }
-      if (config.containsKey("authors")) {
-        plugin.setAttribute("author", config.get("authors").toString().replace("[", "").replace("]", ""));
-      }
-      if (config.containsKey("description")) {
-        plugin.setAttribute("description", config.get("description").toString());
-      }
-      if (config.containsKey("website")) {
-        plugin.setAttribute("website", config.get("website").toString());
-      }
-    }
-    rootElement.appendChild(plugins);
-    */
-    
-    /*
-    Element players = doc.createElement("players");
-    for (Iterator<Player> it = data.getPlayers().iterator(); it.hasNext();) {
-      Player eachPlayer = it.next();
-      Element player = doc.createElement("player");
-      player.setAttribute("world", eachPlayer.getWorld().getName());
-      player.setAttribute("ip", eachPlayer.getAddress().getAddress().getHostAddress());
-      player.setAttribute("xyz", String.valueOf(eachPlayer.getLocation().getBlockX())
-              + "," + String.valueOf(eachPlayer.getLocation().getBlockY())
-              + "," + String.valueOf(eachPlayer.getLocation().getBlockZ()));
-      player.setAttribute("inhand", eachPlayer.getItemInHand().getType().toString());
-      player.setAttribute("allowedflight", String.valueOf(eachPlayer.getAllowFlight()));
-      player.setAttribute("op", String.valueOf(eachPlayer.isOp()));
-      player.setAttribute("gamemode", eachPlayer.getGameMode().toString());
-      player.setAttribute("health", String.valueOf(eachPlayer.getHealth()));
-      player.setAttribute("name", eachPlayer.getName());
-      player.setAttribute("displayname", eachPlayer.getDisplayName().replaceAll("\u00a7", "&amp;"));
-      Element inventory = doc.createElement("inventory");
-      PlayerInventory inven = eachPlayer.getInventory();
-      for (int i = 0; i < inven.getSize(); i++) {
-        if (inven.getItem(i) != null) {
-          ItemStack is = inven.getItem(i);
-          Element item = doc.createElement("item");
-          item.setAttribute("slot", String.valueOf(i));
-          item.setAttribute("id", String.valueOf(is.getTypeId()));
-          item.setAttribute("name", is.getType().toString());
-          item.setAttribute("amount", String.valueOf(is.getAmount()));
-          inventory.appendChild(item);
-        }
-      }
-      player.appendChild(inventory);
-      players.appendChild(player);
-    }
-    rootElement.appendChild(players);
-    */
-    
-    /*
-    Element worlds = doc.createElement("worlds");
-    for (Iterator<World> it = Bukkit.getWorlds().iterator(); it.hasNext();) {
-      World eachWorld = it.next();
-      Element world = doc.createElement("world");
-      world.appendChild(doc.createTextNode(eachWorld.getName()));
-      world.setAttribute("players", String.valueOf(eachWorld.getPlayers().size()));
-      world.setAttribute("time", String.valueOf(eachWorld.getTime()));
-      world.setAttribute("type", eachWorld.getWorldType().toString());
-      world.setAttribute("difficulty", eachWorld.getDifficulty().toString());
-      world.setAttribute("seed", String.valueOf(eachWorld.getSeed()));
-      world.setAttribute("entities", String.valueOf(eachWorld.getEntities().size()));
-      world.setAttribute("moblimit", String.valueOf(eachWorld.getMonsterSpawnLimit()));
-      worlds.appendChild(world);
-    }
-    rootElement.appendChild(worlds);
-    */
-    
+
     Element tps = doc.createElement("tps");
     tps.appendChild(doc.createTextNode(String.valueOf(data.getTPS())));
     rootElement.appendChild(tps);
@@ -179,15 +95,15 @@ public class XmlFeed {
     heartbeat.appendChild(doc.createTextNode(String.valueOf(lastContactMainThread)));
     heartbeat.setAttribute("ticktime", String.valueOf(MineloadPlugin.getTickTime()));
     rootElement.appendChild(heartbeat);
-    
+
     Element tx = doc.createElement("tx");
     tx.appendChild(doc.createTextNode(String.valueOf(data.getNetwork().getTx())));
     rootElement.appendChild(tx);
-    
+
     Element rx = doc.createElement("rx");
     rx.appendChild(doc.createTextNode(String.valueOf(data.getNetwork().getRx())));
     rootElement.appendChild(rx);
-    
+
     double timeTaken = System.currentTimeMillis() - startTime;
     Element time = doc.createElement("generated");
     time.appendChild(doc.createTextNode(String.valueOf(timeTaken)));
@@ -204,6 +120,7 @@ public class XmlFeed {
       String xmlString = sw.toString();
       xmlData = xmlString;
     } catch (Exception e) {
+      Bukkit.getLogger().log(Level.SEVERE, "Couldn't generate mineload xml structure.");
       e.printStackTrace();
     }
   }

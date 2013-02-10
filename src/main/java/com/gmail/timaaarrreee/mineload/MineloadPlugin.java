@@ -78,7 +78,7 @@ public class MineloadPlugin extends JavaPlugin {
     //getConfig().addDefault("polling.interval", "40");
     getConfig().addDefault("password", "changemenow539");
     getConfig().addDefault("debug", "false");
-    saveConfig();
+    this.saveConfig();
   }
 
   /**

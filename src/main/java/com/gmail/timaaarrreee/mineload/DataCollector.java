@@ -9,11 +9,6 @@ public class DataCollector {
   private float tps;
   private int playerCount;
   private int maxPlayers;
-  private int serverPort;
-  private String serverAddress;
-  //private ArrayList<Player> players = new ArrayList<Player>();
-  //private ArrayList<Plugin> plugins = new ArrayList<Plugin>();
-  //private ArrayList<World> worlds = new ArrayList<World>();
   private Server server;
   private long memUsed;
   private long memMax;
@@ -28,12 +23,8 @@ public class DataCollector {
     this.plugin = plugin;
     server = Bukkit.getServer();
     maxPlayers = server.getMaxPlayers();
-    serverPort = server.getPort();
-    serverAddress = Bukkit.getServerName();
     motd = server.getMotd();
     network = new NetworkData();
-    //loadPlugins();
-    
   }
   
    /**
@@ -42,60 +33,16 @@ public class DataCollector {
    */
   public void update() {
     tps = plugin.getTickPoller().getAverageTPS();
-    //loadPlayers();
     loadMemory();
-    //loadWorlds();
     playerCount = server.getOnlinePlayers().length;
     network.update();
   }
   
-  /**
-   * fills up array list of each players name.
-   */
-  /*
-  private void loadPlayers() {
-    players.clear();
-    players.addAll(Arrays.asList(server.getOnlinePlayers()));
-
-    //update total ever joined
-    totalPlayers = server.getOfflinePlayers().length;
-  }
-
-  private void loadPlugins() {
-    plugins.clear();
-    plugins.addAll(Arrays.asList(server.getPluginManager().getPlugins()));
-  }
-  * */
-
   private void loadMemory() {
     memUsed = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1048576;
     memMax = Runtime.getRuntime().maxMemory() / 1048576;
   }
-  /*
-  private void loadWorlds() {
-    worlds.clear();
-    List<World> worldList = server.getWorlds();
-    for (World w : worldList) {
-      worlds.add(w);
-    }
-  }
-  */
-  
-  /*
-  public ArrayList<Player> getPlayers() {
-    return players;
-  }
 
-  public ArrayList<Plugin> getPlugins() {
-    return plugins;
-  }
-  */
-  
-  /*
-  public ArrayList<World> getWorlds() {
-    return worlds;
-  }
-  */
   public float getTPS() {
     return tps;
   }

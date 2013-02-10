@@ -1,7 +1,6 @@
 package com.gmail.timaaarrreee.mineload;
 
 import java.util.LinkedList;
-import java.util.logging.Level;
 
 public class TickPoller implements Runnable {
 

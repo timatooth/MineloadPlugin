@@ -31,6 +31,10 @@ public class NetworkData {
     transmitted = 0;
     received = 0;
     String result = cmdExec("netstat -ib");
+    if(result.length() < 1){
+      System.err.println("Couldn't get network data");
+      return;
+    }
     String[] lines = result.split("\n");
     for (int i = 0; i <= lines.length; i++) {
       StringTokenizer st = new StringTokenizer(lines[i]);
@@ -76,6 +80,7 @@ public class NetworkData {
     String[] lines = result.split("\n");
     for (int i = 0; i < lines.length; i++) {
       StringTokenizer st = new StringTokenizer(lines[i]);
+      
       //ignore the first line (contains column names)
       if (i > 1) {
         String[] data = new String[20];
@@ -91,15 +96,12 @@ public class NetworkData {
             System.out.println("j: " + j + ": " + data[j]);
           }
         }
-        //ignore the loopback interface
+        //ignore the loopback interface, add up all the rest.
         if (!firstchunk[0].equals("lo")) {
           received += Long.parseLong(data[1]);
           transmitted += Long.parseLong(data[9]);
         }
       }
-    }
-    if(debug){
-      System.out.println("Mineload Debug: Network TX: " + this.transmitted + " RX: " + this.received);
     }
   }
 
@@ -126,13 +128,14 @@ public class NetworkData {
       }
       input.close();
     } catch (Exception ex) {
+      System.err.println("Mineload: Error running command: " + cmdLine);
       ex.printStackTrace();
     }
     return output;
   }
 
   /**
-   * Update data fields with new network data. Blocks for at least 1000ms.
+   * Update data fields with new network data.
    */
   public final void update() {
     String os = System.getProperty("os.name").toLowerCase();
@@ -148,9 +151,11 @@ public class NetworkData {
         System.out.println(System.getProperty("os.name"));
       }
     }
+    if(debug){
+      System.out.println("Mineload Debug: Network TX: " + this.transmitted + " RX: " + this.received);
+    }
   }
 
-  //getters
   public long getTx() {
     return transmitted;
   }
