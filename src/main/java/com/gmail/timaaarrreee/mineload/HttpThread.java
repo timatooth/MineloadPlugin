@@ -48,7 +48,10 @@ class HttpThread implements Runnable {
             sendError(500);
           }
           String tryPass = get_query.get("password");
-          if (tryPass != null && tryPass.equals(MineloadPlugin.getPassword())) {
+          if(tryPass == null){
+            tryPass = "";
+          }
+          if (MineloadPlugin.getPassword().equals("") || tryPass.equals(MineloadPlugin.getPassword())) {
             String message = new XmlFeed().getXmlData();
             
             if (message != null || message.length() < 1) {
@@ -106,6 +109,9 @@ class HttpThread implements Runnable {
    * @param code - Http error code.
    */
   private void sendError(int code) {
+    if(MineloadPlugin.debug()){
+      Bukkit.getLogger().log(Level.WARNING, "Http Error: {0} from client {1}", new Object[]{code, server.getRemoteSocketAddress()});
+    }
     switch (code) {
       case 406:
         String error = "<h1>HTTP/1.1 406 Not Acceptable</h1>"
