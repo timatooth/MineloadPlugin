@@ -1,7 +1,6 @@
 package com.gmail.timaaarrreee.mineload;
 
 import com.alecgorge.minecraft.jsonapi.JSONAPI;
-import com.griefcraft.lwc.LWCPlugin;
 import java.io.IOException;
 import java.util.logging.Level;
 import org.bukkit.plugin.Plugin;
@@ -61,7 +60,17 @@ public class MineloadPlugin extends JavaPlugin {
     } catch (IOException e) {
       // Failed to submit the stats :-(
     }
-    loadLWCJSON();
+    
+    Plugin checkplugin = this.getServer().getPluginManager().getPlugin("JSONAPI");
+		if(checkplugin != null) {
+			// get the JSONAPI instance
+			JSONAPI jsonapi = (JSONAPI)checkplugin;
+      
+      //this is needs fixing.
+		}
+		else {
+			getLogger().log(Level.WARNING, "JSONAPI plugin is not installed. Many web interface features won't work.");
+		}
   }
 
   @Override
@@ -140,70 +149,5 @@ public class MineloadPlugin extends JavaPlugin {
    */
   public static boolean debug() {
     return debug;
-  }
-
-  /**
-   * Gets the running instance of LWC and JSONAPI and registers the
-   * lwc.getPlayerChests method.
-   *
-   */
-  
-  private void loadLWCJSON() {
-    getLogger().log(Level.INFO, "loadJsonapi()");
-    JSONAPI jsonapi;
-    LWCPlugin lwc;
-    getLogger().log(Level.INFO, "declared vars");
-    
-    try {
-      if (hasPlugin("JSONAPI")) {
-        getLogger().log(Level.INFO, "JSONAPI Plugin true");
-        jsonapi = (JSONAPI) this.getServer().getPluginManager().getPlugin("JSONAPI");
-        getLogger().log(Level.INFO, "JSONAPI Plugin found");
-
-      } else {
-        getLogger().log(Level.WARNING, "JSONAPI Plugin not installed. Not adding extra lwc methods. Many Mineload web interface features won't work!");
-        
-        return;
-      }
-      
-      if (hasPlugin("LWC")) {
-        lwc = (LWCPlugin) getServer().getPluginManager().getPlugin("LWC");
-        getLogger().log(Level.INFO, "LWC plugin found");
-        
-        //add the methods
-        //LWCJsonProvider lwcjson = new LWCJsonProvider(lwc);
-        //jsonapi.getCaller().registerMethods(lwcjson);
-        jsonapi.registerAPICallHandler(new LWCJsonHandler(lwc.getLWC()));
-        
-      } else {
-        getLogger().log(Level.INFO, "LWC Plugin not installed. Not adding extra lwc methods.");
-        
-        return;
-      }
-
-      
-      getLogger().log(Level.INFO, "Successfully hooked into JSONAPI and LWC.");
-    } catch (Exception e) {
-      getLogger().log(Level.WARNING, "Exception thrown when adding LWC-JSON methods. Trace follows.");
-      e.printStackTrace();
-    }
-  }
-  
-  
-  /**
-   * Basic linear plugin search by name.
-   * @param pluginName
-   * @return boolean
-   */
-  private boolean hasPlugin(String pluginName){
-    
-    Plugin[] plugins = getServer().getPluginManager().getPlugins();
-    for(Plugin p : plugins){
-      if(p.getName().equalsIgnoreCase(pluginName)){
-        return true;
-      }
-    }
-    
-    return false;
   }
 }

@@ -1,8 +1,8 @@
 name: MineloadPlugin
-version: 0.0.3
+version: 0.0.4
 description: Provide performance data access to web or other application.
 
 author: timatooth_teeth
-website: http://forgottendynasties.net
+website: http://github.com/Timatooth
 softdepend: [JSONAPI, LWC]
 main: com.gmail.timaaarrreee.mineload.MineloadPlugin
