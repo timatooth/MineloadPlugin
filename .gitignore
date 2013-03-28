@@ -1,3 +1,4 @@
+.DS_Store
 *.class
 manifest.mf
 =======
@@ -14,3 +15,6 @@ build/
 
 #maven
 target/
+
+#emacs
+*~

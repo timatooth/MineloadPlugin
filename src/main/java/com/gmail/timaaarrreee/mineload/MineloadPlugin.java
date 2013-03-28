@@ -1,8 +1,8 @@
 package com.gmail.timaaarrreee.mineload;
 
-import com.alecgorge.minecraft.jsonapi.JSONAPI;
 import java.io.IOException;
 import java.util.logging.Level;
+
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mcstats.metrics.Metrics;
@@ -62,15 +62,9 @@ public class MineloadPlugin extends JavaPlugin {
     }
     
     Plugin checkplugin = this.getServer().getPluginManager().getPlugin("JSONAPI");
-		if(checkplugin != null) {
-			// get the JSONAPI instance
-			JSONAPI jsonapi = (JSONAPI)checkplugin;
-      
-      //this is needs fixing.
-		}
-		else {
-			getLogger().log(Level.WARNING, "JSONAPI plugin is not installed. Many web interface features won't work.");
-		}
+    if(checkplugin == null) {
+	getLogger().log(Level.WARNING, "JSONAPI plugin is not installed. Many web interface features won't work if you are using it..");
+    }
   }
 
   @Override
@@ -101,7 +95,6 @@ public class MineloadPlugin extends JavaPlugin {
    * Server socket thread and other services will access the server state from
    * here.
    *
-   * @return
    */
   public static DataCollector getData() {
     return data;
@@ -134,7 +127,7 @@ public class MineloadPlugin extends JavaPlugin {
   }
 
   /**
-   * Time it tooke to complete one tick.
+   * Time it took to complete one tick.
    *
    * @return
    */
