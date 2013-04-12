@@ -1,4 +1,4 @@
-package com.gmail.timaaarrreee.mineload;
+package com.timatooth.mineload;
 
 import java.io.StringWriter;
 import java.util.logging.Level;

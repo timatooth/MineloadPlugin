@@ -1,4 +1,4 @@
-package com.gmail.timaaarrreee.mineload;
+package com.timatooth.mineload;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -61,9 +61,17 @@ public class MineloadPlugin extends JavaPlugin {
       // Failed to submit the stats :-(
     }
     
-    Plugin checkplugin = this.getServer().getPluginManager().getPlugin("JSONAPI");
-    if(checkplugin == null) {
+    Plugin jsonapi = this.getServer().getPluginManager().getPlugin("JSONAPI");
+    Plugin lwc = this.getServer().getPluginManager().getPlugin("LWC");
+    if(jsonapi == null) {
 	getLogger().log(Level.WARNING, "JSONAPI plugin is not installed. Many web interface features won't work if you are using it..");
+    }
+    
+    if(jsonapi != null && lwc != null){
+       getLogger().log(Level.INFO, "LWC & JSONAPI found. Adding extra JSONAPI methods.");
+       LWCJsonProvider lwcjson = new LWCJsonProvider();
+    } else{
+        getLogger().log(Level.INFO, "LWC or JSONAPI was not found. Not adding extra methods.");
     }
   }
 

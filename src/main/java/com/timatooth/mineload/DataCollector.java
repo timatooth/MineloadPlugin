@@ -1,4 +1,4 @@
-package com.gmail.timaaarrreee.mineload;
+package com.timatooth.mineload;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Server;

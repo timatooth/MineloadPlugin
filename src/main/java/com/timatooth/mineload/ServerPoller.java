@@ -1,5 +1,5 @@
 
-package com.gmail.timaaarrreee.mineload;
+package com.timatooth.mineload;
 
 public class ServerPoller implements Runnable{
   private DataCollector dataCollector;
