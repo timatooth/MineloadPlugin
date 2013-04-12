@@ -3,10 +3,6 @@
 manifest.mf
 =======
 
-# Package Files #
-*.jar
-*.war
-*.ear
 
 #netbeans generated files
 nbproject/
