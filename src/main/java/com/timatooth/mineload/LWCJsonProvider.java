@@ -47,7 +47,7 @@ public class LWCJsonProvider implements JSONAPIMethodProvider {
         List<Protection> chests = new ArrayList<Protection>();
 
         for (Protection p : protections) {
-            if (p.getBlock().getType() == Material.CHEST) {
+	    if (p.getBlockId() == 54) {
                 chests.add(p);
             }
         }
