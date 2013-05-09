@@ -1,8 +1,8 @@
 name: MineloadPlugin
-version: 0.0.5
+version: 0.0.6
 description: Generates Minecraft server performace in XML format.
 
-author: timatooth
-website: http://github.com/timatooth
+author: Timatooth
+website: https://github.com/Timatooth/
 softdepend: [JSONAPI, LWC]
 main: com.timatooth.mineload.MineloadPlugin

@@ -7,22 +7,24 @@ import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.model.Protection;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 
 public class LWCJsonProvider implements JSONAPIMethodProvider {
+
     private LWC lwcInstance;
 
     public LWCJsonProvider() {
         LWCPlugin lwcplugin = (LWCPlugin) Bukkit.getServer().getPluginManager().getPlugin("LWC");
         this.lwcInstance = lwcplugin.getLWC();
-        
+
         if (lwcInstance == null) {
             Bukkit.getLogger().log(Level.SEVERE, "Something went wrong getting LWC instance.");
         }
-        
+
         //get jsonapi and register this as a method provider
         JSONAPI jsonapiplugin = (JSONAPI) Bukkit.getServer().getPluginManager().getPlugin("JSONAPI");
         jsonapiplugin.registerMethods(this);
@@ -30,7 +32,7 @@ public class LWCJsonProvider implements JSONAPIMethodProvider {
 
     /**
      * Returns formatted string of world,x.y.z of chests related to a Player
-     *     
+     *
      * @param playername
      * @return formatted string of world,x.y.z of chests related to a Player
      * @since MineloadPlugin 0.0.5
@@ -44,10 +46,10 @@ public class LWCJsonProvider implements JSONAPIMethodProvider {
     })
     public String[] getPlayerLWCChests(String playername) {
         List<Protection> protections = lwcInstance.getPhysicalDatabase().loadProtectionsByPlayer(playername);
-        List<Protection> chests = new ArrayList<Protection>();
+        List<Protection> chests = new LinkedList<Protection>();
 
         for (Protection p : protections) {
-	    if (p.getBlockId() == 54) {
+            if (p.getBlockId() == 54) {
                 chests.add(p);
             }
         }
@@ -61,5 +63,20 @@ public class LWCJsonProvider implements JSONAPIMethodProvider {
             toReturn[i] = world + "," + String.valueOf(x) + "," + String.valueOf(y) + "," + String.valueOf(z);
         }
         return toReturn;
+    }
+
+    /**
+     * Send a hint to the JVM to run the garbage collector to free memory.
+     * This does not guarantee that the collector will run immediately.
+     *
+     * @since MineloadPlugin 0.0.6
+     */
+    @API_Method(
+            namespace = "mineload",
+            description = "Perform Java object garbage collection")
+    public void performGC() {
+        Logger log = Bukkit.getServer().getPluginManager().getPlugin("MineloadPlugin").getLogger();
+        log.log(Level.INFO, "Garbage collector called.");
+        System.gc();
     }
 }
