@@ -10,8 +10,8 @@ import java.util.Map;
  */
 public class Response {
 
-    /* Header information to send back */
-    private Map<String, String> headers;
-    /* Text content to be sent */
-    private String content;
+  /* Header information to send back */
+  private Map<String, String> headers;
+  /* Text content to be sent */
+  private String content;
 }
