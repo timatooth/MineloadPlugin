@@ -1,8 +1,9 @@
 package com.timatooth.mineload;
 
-import com.timatooth.mineload.http.Listener;
+import com.timatooth.mineload.http.HttpServer;
 import java.io.IOException;
 import java.util.logging.Level;
+import java.util.regex.Pattern;
 
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -78,8 +79,20 @@ public class MineloadPlugin extends JavaPlugin {
         //start the MineloadHTTPD server
         if (getConfig().getBoolean("http.enabled")) {
             getLogger().log(Level.INFO, "Starting mineloadHTTPD");
-            Listener mineloadServer = new Listener(getConfig().getInt("http.port"));
+            HttpServer mineloadServer = new HttpServer(getConfig().getInt("http.port"));
             mineloadServer.start();
+            
+            //register Web IF view for mineload admin web interface.
+            Pattern pattern = Pattern.compile("^/mineload/?[\\w\\.\\-/]*$");
+            if(HttpServer.getScheduler().registerView(pattern, new MineloadWebView())){
+              System.out.println("MineloadView registered successfully!");
+            }
+            
+            //register XML view for original system. Avoids breakage.
+            Pattern rootPattern = Pattern.compile("^/$");
+            if(HttpServer.getScheduler().registerView(rootPattern, new MineloadXmlView())){
+              System.out.println("MineloadXML View registered successfully!");
+            }
         }
     }
 

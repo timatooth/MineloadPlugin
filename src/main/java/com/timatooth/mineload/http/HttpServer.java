@@ -9,10 +9,11 @@ import java.net.Socket;
  * are started in a new thread.
  *
  * Ideas: - Set global limit of running connections/threads.
+ *        - Use a thread pool using Executors.
  *
  * @author Tim Sullivan
  */
-public class Listener extends Thread {
+public class HttpServer extends Thread {
 
   /* Keep track of currently running HTTP instance threads */
   private int threadCount;
@@ -22,19 +23,22 @@ public class Listener extends Thread {
   private boolean keepRunning;
   /* Keep a thread limit to restrict system resource usage */
   private int connectionLimit;
+  /* HttpScheduler stores collection of Views */
+  private static HttpScheduler scheduler;
 
   /**
-   * Create the Http Listener on specified port. Creates Http runtime threads
+   * Create the Http HttpServer on specified port. Creates Http runtime threads
    * for each connection.
    *
    * @param port The specified port to listen on.
    */
-  public Listener(int port) {
+  public HttpServer(int port) {
     this.connectionLimit = 200;
     /* set name of thread */
     this.setName("Mineload HTTP Listener Thread");
     /* set status to be a background daemon thread */
     this.setDaemon(true);
+    HttpServer.scheduler = new HttpScheduler();
 
     try {
       serverSocket = new ServerSocket(port);
@@ -47,7 +51,7 @@ public class Listener extends Thread {
   }
 
   /**
-   * Set the state of the listener thread. Listener thread should terminate when
+   * Set the state of the listener thread. HttpServer thread should terminate when
    * ready and no longer accept new connections.
    *
    * @param state set to false to disable listener.
@@ -66,7 +70,6 @@ public class Listener extends Thread {
       /* Only accept new connections if limit hasn't been reached */
       if (threadCount < connectionLimit) {
         try {
-          System.out.println("Got new connection");
           Socket connection = serverSocket.accept();
           Runner run = new Runner(connection);
           Thread newThread = new Thread(run);
@@ -93,5 +96,9 @@ public class Listener extends Thread {
    */
   public synchronized void updateConnectionCount() {
     this.threadCount--;
+  }
+  
+  public static synchronized HttpScheduler getScheduler(){
+    return scheduler;
   }
 }

@@ -27,9 +27,6 @@ class Runner implements Runnable {
 
   public Runner(Socket connection) {
     this.connection = connection;
-    System.out.println("New connection from "
-            + connection.getRemoteSocketAddress());
-
     //set up input and output streams from connection.
     try {
       InputStream is = connection.getInputStream();
@@ -56,11 +53,11 @@ class Runner implements Runnable {
     Map<String, String> headers = new HashMap<String, String>();
     try {
       while ((line = in.readLine()) != null) {
-
         if (lineCount == 0) {
           //parse the first request line.
           if ((request = parseRequest(line)) == null) {
             //malformed request
+            System.out.println("Got a malformed request");
             break;
           }
         } else if (!line.isEmpty()) {
@@ -71,17 +68,24 @@ class Runner implements Runnable {
         }
 
         lineCount++;
-        System.out.println(line);
+
         if (line.isEmpty() && request != null) {
           request.setHeaders(headers);
           request.setRemoteAddr(connection.getRemoteSocketAddress().toString());
-          //System.out.println(request);
+          request.setSocket(connection);
+
+          Response res = HttpServer.getScheduler().runView(request);
+          res.send();
+
           if (request.getType().equalsIgnoreCase("get")) {
+            //FIXME
             break;
           }
         }
       }
+
       this.connection.close();
+
     } catch (IOException ioe) {
       ioe.printStackTrace();
     }
@@ -93,25 +97,21 @@ class Runner implements Runnable {
    * @param line
    * @return A new request object if supported. Otherwise null.
    */
-  public Request parseRequest(String line) {
-    //TODO cleanup
+  private Request parseRequest(String line) {
     Request request = null;
     Scanner input = new Scanner(line);
     if (input.hasNext("GET")) {
-      try {
-        String type = input.next();
-        String url = input.next();
-        String httpVersion = input.next();
-        request = new Request(type, url, httpVersion);
-      } catch (Exception e) {
-      }
-
+      String type = input.next();
+      String url = input.next();
+      String httpVersion = input.next();
+      request = new Request(type, url, httpVersion, connection);
+      
     } else if (input.hasNext("POST")) {
       try {
         String type = input.next();
         String url = input.next();
         String httpVersion = input.next();
-        request = new Request(type, url, httpVersion);
+        request = new Request(type, url, httpVersion, connection);
       } catch (Exception e) {
       }
     } else {
