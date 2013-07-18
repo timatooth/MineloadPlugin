@@ -1,8 +1,12 @@
 package com.timatooth.mineload.http;
 
+import com.timatooth.mineload.MineloadPlugin;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Class listens on a specified port accepting new connections. New connections
@@ -58,6 +62,13 @@ public class HttpServer extends Thread {
    */
   public synchronized void setRunning(boolean state) {
     this.keepRunning = state;
+    if(!state){
+      try {
+        this.serverSocket.close();
+      } catch (IOException ex) {
+        Logger.getLogger(HttpServer.class.getName()).log(Level.SEVERE, "Socket did not close cleanly.", ex);
+      }
+    }
   }
 
   /**
@@ -74,7 +85,9 @@ public class HttpServer extends Thread {
           Runner run = new Runner(connection);
           Thread newThread = new Thread(run);
           newThread.start();
-        } catch (IOException ioe) {
+        } catch (SocketException se) {
+          //socket now closed due to reload.
+        } catch (IOException ioe){
           ioe.printStackTrace();
         }
       }
@@ -98,6 +111,10 @@ public class HttpServer extends Thread {
     this.threadCount--;
   }
   
+  /**
+   * Get Scheduler to register new Views.
+   * @return 
+   */
   public static synchronized HttpScheduler getScheduler(){
     return scheduler;
   }

@@ -67,7 +67,6 @@ public class AssetManager {
     } else if (filename.matches("^.+\\.(jpg|png|gif)+$")) {
       //binary files
       byte[] buf = new byte[(int)path.length()];
-      System.out.println("Length of binary file is: " + buf.length);
       DataInputStream dataInputStream = new DataInputStream(new BufferedInputStream(new FileInputStream(path)));
       try {
         dataInputStream.readFully(buf);

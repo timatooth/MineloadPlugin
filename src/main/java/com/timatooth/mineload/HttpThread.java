@@ -13,7 +13,7 @@ import java.util.logging.Level;
 import org.bukkit.Bukkit;
 
 /**
- *
+ * @deprecated use http package.
  * @author tim
  */
 class HttpThread implements Runnable {

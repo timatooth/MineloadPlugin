@@ -15,7 +15,6 @@ public class MineloadWebView implements View {
 
   @Override
   public Response handle(Request request) {
-    System.out.println(request);
     String message = "<h1>Hello World</h1>"
             + "<p>I'm a view that will be displayed on the browser!</p>" 
             + "<hr>"

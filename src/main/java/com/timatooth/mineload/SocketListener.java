@@ -8,7 +8,11 @@ import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
-
+/**
+ * Old class to deliver XML to requests.
+ * @deprecated com.timatooth.mineload.http.HttpServer is the replacement.
+ * @author tim
+ */
 public class SocketListener extends Thread {
 
   private ServerSocket server;
