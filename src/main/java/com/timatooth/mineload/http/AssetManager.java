@@ -58,13 +58,13 @@ public class AssetManager {
       
       return sb.toString().getBytes();
     }
-    if (filename.matches("^.+\\.(htm|html|css|xml|js|php)+$")) {
+    if (false && filename.matches("^.+\\.(htm|html|css|xml|js|php)+$")) {
       //plain text files.
       // Use scanner to open file as text, \\a is for EOF as delimiter.
       String text = new Scanner(path.getAbsoluteFile(), "UTF-8").useDelimiter("\\A").next();
       return text.getBytes();
       
-    } else if (filename.matches("^.+\\.(jpg|png|gif)+$")) {
+    } else {
       //binary files
       byte[] buf = new byte[(int)path.length()];
       DataInputStream dataInputStream = new DataInputStream(new BufferedInputStream(new FileInputStream(path)));
@@ -75,8 +75,5 @@ public class AssetManager {
       }
       return buf;
     }
-
-    System.out.println("Unknown file extension not processed: " + filename);
-    return "Error, unknown file request could not be processed.".getBytes();
   }
 }

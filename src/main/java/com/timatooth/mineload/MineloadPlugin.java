@@ -73,13 +73,15 @@ public class MineloadPlugin extends JavaPlugin {
     mineloadServer = new HttpServer(getConfig().getInt("socket.port"));
     mineloadServer.start();
 
-    //register Web IF view for mineload admin web interface.
+    /* Disabled, far from ready yet!
+     * register Web IF view for mineload admin web interface.
     Pattern pattern = Pattern.compile("^/mineload/?[\\w\\.\\-/]*$");
     if (HttpServer.getScheduler().registerView(pattern, new MineloadWebView())) {
       getLogger().log(Level.INFO, "URLPattern(MineloadWebView): {0} registered successfully!", pattern);
     }
+    * */
 
-    //register XML view for original system. Avoids breakage.
+    //register XML view for original system. Keeping URL the same avoids breakage.
     Pattern rootPattern = Pattern.compile("^/$");
     if (HttpServer.getScheduler().registerView(rootPattern, new MineloadXmlView())) {
       getLogger().log(Level.INFO, "URLPattern(MineloadXMLView): {0} registered successfully!", rootPattern);
