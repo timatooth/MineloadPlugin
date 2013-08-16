@@ -15,28 +15,21 @@ public class MineloadWebView implements View {
 
   @Override
   public Response handle(Request request) {
-    String message = "<h1>Hello World</h1>"
-            + "<p>I'm a view that will be displayed on the browser!</p>" 
-            + "<hr>"
-            + "<h2>More Data Here</h2>";
-    Response response = Response.compose(request, message);
+    System.out.println(request);
     AssetManager am = new AssetManager("mineload");
-    
+    Response response = Response.compose(request, "Default");
     try {
+      System.out.println(request.getUrl());
       response.setContent(am.loadAsset(request.getUrl().substring(1)));
-      //set the content type of response
       String[] chunks = request.getUrl().split("\\.");
-      //System.out.println(request.getUrl());
       response.getHeaders().put("Content-Type", AssetManager.MIME.get(chunks[chunks.length-1]));
       response.getHeaders().put("Content-Length", String.valueOf(response.getContent().length));
       
     } catch (FileNotFoundException fnf){
-      //throw 404 error or try something else..
-      System.out.println("Error 404 file not found");
-      fnf.printStackTrace();
+      response = Response.compose(request, "File not found");
+      response.setStatus(404, "File not found");
     }
     
-    //AssetManager.rootDir.getAbsolutePath()
     return response;
   }
   

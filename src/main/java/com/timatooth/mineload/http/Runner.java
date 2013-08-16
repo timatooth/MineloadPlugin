@@ -4,8 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintStream;
 import java.net.Socket;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -22,8 +22,6 @@ class Runner implements Runnable {
   private Socket connection;
   /* Data coming from the browser */
   private BufferedReader in;
-  /* Data to be sent back to the browser */
-  private PrintStream out;
 
   public Runner(Socket connection) {
     this.connection = connection;
@@ -32,7 +30,6 @@ class Runner implements Runnable {
       InputStream is = connection.getInputStream();
       InputStreamReader isr = new InputStreamReader(is);
       in = new BufferedReader(isr);
-      out = new PrintStream(connection.getOutputStream());
     } catch (IOException ioe) {
       System.out.println("Failed setting up io streams");
       ioe.printStackTrace();
@@ -50,14 +47,15 @@ class Runner implements Runnable {
     String line;
     int lineCount = 0;
     Request request = null;
+    boolean postflag = false;
     Map<String, String> headers = new HashMap<String, String>();
     try {
-      while ((line = in.readLine()) != null) {
+      while ((line = in.readLine()) != null && lineCount < 100) {
         if (lineCount == 0) {
           //parse the first request line.
           if ((request = parseRequest(line)) == null) {
             //malformed request
-            System.out.println("Got a malformed request");
+            System.out.println("Got something other than GET, POST request.");
             break;
           }
         } else if (!line.isEmpty()) {
@@ -74,14 +72,47 @@ class Runner implements Runnable {
           request.setRemoteAddr(connection.getRemoteSocketAddress().toString());
           request.setSocket(connection);
 
-          Response res = HttpServer.getScheduler().runView(request);
-          res.send();
-
-          if (request.getType().equalsIgnoreCase("get")) {
-            //FIXME
+          if (request.getType().equals("GET")) {
+            Response res = HttpServer.getScheduler().runView(request);
+            res.send();
+            break;
+          } else if (request.getType().equals("POST")) {
+            postflag = true;
             break;
           }
         }
+      }
+
+      if (postflag) {
+        int bufsize = Integer.parseInt(request.getHeader("Content-Length"));
+        //create a buffer of size content length.
+        char[] buffer = new char[bufsize];
+
+        for (int k = 0; k < bufsize; k++) {
+          if (!in.ready()) {
+            //no content? be angry here.
+            break;
+          }
+          int piece = in.read();
+
+          if (piece == -1) {
+            break;
+          }
+          buffer[k] = (char) piece;
+        }
+        //should now have the info needed to create POST request
+        String content = new String(buffer);
+        content = URLDecoder.decode(content, "UTF-8");
+        Map<String, String> post = new HashMap<String, String>();
+        //split on '&' values to get thunks (technical term) of key/values
+        String[] thunks = content.split("&");
+        for(String thunk : thunks){
+          String[] pair = thunk.split("=");
+          post.put(pair[0], pair[1]);
+        }
+        request.setPost(post);
+        Response res = HttpServer.getScheduler().runView(request);
+        res.send();
       }
 
       this.connection.close();
@@ -105,7 +136,7 @@ class Runner implements Runnable {
       String url = input.next();
       String httpVersion = input.next();
       request = new Request(type, url, httpVersion, connection);
-      
+
     } else if (input.hasNext("POST")) {
       try {
         String type = input.next();

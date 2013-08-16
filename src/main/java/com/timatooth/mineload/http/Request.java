@@ -76,6 +76,7 @@ public class Request {
   }
 
   private void parsePost() {
+    System.out.println("Parsing POST");
   }
 
   public void setRemoteAddr(String add) {
@@ -148,5 +149,13 @@ public class Request {
   
   public Socket getSocket(){
     return this.connection;
+  }
+  
+  public String getHeader(String header){
+    return this.headers.get(header);
+  }
+  
+  public void setPost(Map<String, String> post){
+    this.post = post;
   }
 }

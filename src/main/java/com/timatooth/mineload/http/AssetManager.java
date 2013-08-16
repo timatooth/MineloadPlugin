@@ -47,26 +47,20 @@ public class AssetManager {
    */
   public byte[] loadAsset(String filename) throws FileNotFoundException {
     File path = new File(rootDir, filename);
-    if(path.isDirectory()){
+    //File path = new File(prepath, filename);
+    if (path.isDirectory()) {
       File[] listings = path.listFiles();
       StringBuilder sb = new StringBuilder();
       sb.append("<h1>Contents of: " + filename + "</h1>");
-      for(File f : listings){
-        sb.append(f.toString());
+      sb.append("<a href='../'>..(Parent Directory)</a><br>");
+      for (File f : listings) {
+        sb.append("<a href="+f.getName()+">"+f.getName()+"</a>");
         sb.append("<br>");
       }
-      
+
       return sb.toString().getBytes();
-    }
-    if (false && filename.matches("^.+\\.(htm|html|css|xml|js|php)+$")) {
-      //plain text files.
-      // Use scanner to open file as text, \\a is for EOF as delimiter.
-      String text = new Scanner(path.getAbsoluteFile(), "UTF-8").useDelimiter("\\A").next();
-      return text.getBytes();
-      
     } else {
-      //binary files
-      byte[] buf = new byte[(int)path.length()];
+      byte[] buf = new byte[(int) path.length()];
       DataInputStream dataInputStream = new DataInputStream(new BufferedInputStream(new FileInputStream(path)));
       try {
         dataInputStream.readFully(buf);

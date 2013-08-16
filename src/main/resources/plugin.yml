@@ -1,5 +1,5 @@
 name: MineloadPlugin
-version: 0.0.7
+version: 0.0.8-dev
 description: Generates Minecraft server performace in XML format.
 
 author: Timatooth

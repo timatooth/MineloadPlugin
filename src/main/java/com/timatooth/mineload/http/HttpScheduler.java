@@ -53,7 +53,8 @@ public class HttpScheduler {
       }
     }
     //no view found, its a 404 error.
-    Response error = Response.compose(request, "<h1>Not Found</h1>");
+    Response error = Response.compose(request, "<h1>Not Found</h1>"
+            + "<p>The URL didn't match any registered mineload views</p>");
     error.setStatus(404, "Not Found");
     return error;
   }
