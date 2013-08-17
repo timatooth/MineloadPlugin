@@ -8,8 +8,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- *
- * @author tim
+ * Maintains list of registered pattern/views.
+ * @author Tim Sullivan
  */
 public class HttpScheduler {
   

@@ -82,7 +82,10 @@ class Runner implements Runnable {
           }
         }
       }
-
+      /*
+       * If the data is POST, we need to keep reading in bytes sent from the 
+       * browser.
+       */
       if (postflag) {
         int bufsize = Integer.parseInt(request.getHeader("Content-Length"));
         //create a buffer of size content length.
@@ -123,9 +126,10 @@ class Runner implements Runnable {
   }
 
   /**
-   * Parse the initial request line. E.g GET / HTTP/1.1 or: POST /data HTTP/1.1
+   * Parse the initial request line. 
+   * E.g GET / HTTP/1.1 or: POST /data HTTP/1.1
    *
-   * @param line
+   * @param line the first line coming from http request.
    * @return A new request object if supported. Otherwise null.
    */
   private Request parseRequest(String line) {

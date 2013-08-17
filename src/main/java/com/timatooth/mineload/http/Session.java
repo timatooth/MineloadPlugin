@@ -9,15 +9,15 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Session information stored for each client. Contains a map of key values for
- * storing information such as usernames, logged in status etc. This information
- * needs to be preserved on a database.
+ * Session information stored for each client. 
+ * Contains a map of key values for storing information such as usernames,
+ * logged in status etc. This information needs to be preserved on a database.
  *
  * @author tim
  */
 public class Session implements Serializable {
+  
   /* SessionID of user */
-
   private String sessionID;
   /* Data associated with session */
   private Map<String, String> sessionData;
@@ -26,6 +26,8 @@ public class Session implements Serializable {
 
   /**
    * Create a new session for person.
+   * Session is assigned a UUID and then immediately inserted into 
+   * the database.
    */
   public Session() {
     sessionID = UUID.randomUUID().toString();

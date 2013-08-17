@@ -3,10 +3,15 @@ package com.timatooth.mineload;
 import java.util.LinkedList;
 
 public class TickPoller implements Runnable {
-
+  
+  /* History of ticks to calculate average */
   private LinkedList<Float> history = new LinkedList<Float>();
+  /* Last time server time was polled */
   private long lastPoll = System.currentTimeMillis();
-
+  
+  /**
+   * Keeping a running average of the servers tickrate performance.
+   */
   @Override
   public void run() {
     final long currentTime = System.currentTimeMillis();
@@ -23,7 +28,11 @@ public class TickPoller implements Runnable {
     }
     lastPoll = currentTime;
   }
-
+  
+  /**
+   * Get the average tickrate the server is running at from the main thread.
+   * @return float of average tickrate.
+   */
   public float getAverageTPS() {
     float avg = 0;
     for (Float f : history) {

@@ -9,8 +9,10 @@ import java.io.FileNotFoundException;
 
 /**
  * Official Internal Mineload Web Interface View.
- * handles requests for /admin/ to display dashboard.
- * @author tim
+ * handles requests for /mineload/ to display dashboard.
+ * API needs refactoring.
+ * 
+ * @author Tim Sullivan
  */
 public class MineloadWebView implements View {
 

@@ -1,6 +1,6 @@
 /**
- * This class aims to collect network bytes transmitted & received on
- * the servers network interface.
+ * This class aims to collect network bytes transmitted & received on the
+ * servers network interface.
  *
  * @author Tim Sullivan
  */
@@ -19,19 +19,25 @@ public class NetworkData {
     debug = MineloadPlugin.debug();
     update();
   }
-
+  /**
+   * User system methods to obtain network interface data.
+   * TODO: netstat?
+   */
   private void processWindows() {
-    if(debug){
+    if (debug) {
       System.out.println("Windows network traffic tracking is not supported yet.");
     }
   }
-
+  
+  /**
+   * Call netstat and parse its ugly response.
+   */
   private void processMac() {
     //reset fields
     transmitted = 0;
     received = 0;
     String result = cmdExec("netstat -ib");
-    if(result.length() < 1){
+    if (result.length() < 1) {
       System.err.println("Couldn't get network data");
       return;
     }
@@ -61,17 +67,17 @@ public class NetworkData {
   }
 
   /**
-   * Gets the output of the kernels network interface file
-   * and parses it.
+   * Gets the output of the kernels network interface file and parses it.
+   * TODO: linux systems may have different formatting for this and are not consistant.
    */
   private void processLinux() {
     transmitted = 0;
     received = 0;
     String result;
-    try{
+    try {
       result = fileToString(new File("/proc/net/dev"));
-    } catch (IOException ioe){
-      if(debug){
+    } catch (IOException ioe) {
+      if (debug) {
         System.out.println("Mineload Debug: error opening /proc/net/dev");
         ioe.printStackTrace();
       }
@@ -80,7 +86,7 @@ public class NetworkData {
     String[] lines = result.split("\n");
     for (int i = 0; i < lines.length; i++) {
       StringTokenizer st = new StringTokenizer(lines[i]);
-      
+
       //ignore the first line (contains column names)
       if (i > 1) {
         String[] data = new String[20];
@@ -90,9 +96,9 @@ public class NetworkData {
           x++;
         }
         String[] firstchunk = data[0].split(":");
-        if(debug){
+        if (debug) {
           System.out.println("Debug: parsing net segments. array length is " + firstchunk.length);
-          for(int j = 0; j < data.length; ++j){
+          for (int j = 0; j < data.length; ++j) {
             System.out.println("j: " + j + ": " + data[j]);
           }
         }
@@ -116,7 +122,12 @@ public class NetworkData {
   private boolean isLinux(String os) {
     return (os.indexOf("linux") >= 0);
   }
-
+  
+  /**
+   * Execute an operating system command and retun its output.
+   * @param cmdLine Command to run
+   * @return String of stdout response.
+   */
   private String cmdExec(String cmdLine) {
     String line;
     String output = "";
@@ -146,24 +157,37 @@ public class NetworkData {
     } else if (isMac(os)) {
       processMac();
     } else {
-      if(debug){
+      if (debug) {
         System.out.println("Unknown OS detected, can't read network data");
         System.out.println(System.getProperty("os.name"));
       }
     }
-    if(debug){
+    if (debug) {
       System.out.println("Mineload Debug: Network TX: " + this.transmitted + " RX: " + this.received);
     }
   }
-
+  
+  /**
+   * Get the total amount of bytes transmitted on interface
+   * @return transmitted
+   */
   public long getTx() {
     return transmitted;
   }
-
+  
+  /**
+   * Get the total amount of bytes received on the network interface.
+   * @return 
+   */
   public long getRx() {
     return received;
   }
-
+  /**
+   * Open a file as a string
+   * @param file file to open
+   * @return String of contents
+   * @throws IOException 
+   */
   public static String fileToString(File file) throws IOException {
     int len;
     char[] chr = new char[4096];

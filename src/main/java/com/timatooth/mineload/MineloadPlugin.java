@@ -10,7 +10,13 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mcstats.Metrics;
 
+/**
+ * MineloadPlugin Main class.
+ * Contains main entry point onEnable().
+ * @author Tim Sullivan
+ */
 public class MineloadPlugin extends JavaPlugin {
+
   private static DataCollector data;
   private static String xmlData;
   private static String accessPassword;
@@ -20,8 +26,10 @@ public class MineloadPlugin extends JavaPlugin {
   private static long tickTime;
   private static boolean debug;
   private HttpServer mineloadServer;
-  private Database database;
-
+  
+  /**
+   * Starting method
+   */
   @Override
   public void onEnable() {
     heartBeatTime = System.currentTimeMillis();
@@ -47,7 +55,7 @@ public class MineloadPlugin extends JavaPlugin {
         tickTime = heartBeatTime - old;
       }
     }, 1, 20);
-    
+
     /*
      * MCStats Plugin Metrics.
      */
@@ -95,7 +103,10 @@ public class MineloadPlugin extends JavaPlugin {
     mineloadServer.setRunning(false);
     mineloadServer.interrupt();
   }
-
+  
+  /**
+   * Set up default configuration options.
+   */
   private void loadConfig() {
     getConfig().options().copyDefaults(true);
     getConfig().addDefault("database.engine", "h2");
@@ -111,34 +122,49 @@ public class MineloadPlugin extends JavaPlugin {
   }
 
   /**
-   * Server socket thread and other services will access the server state from
-   * here.
-   *
+   * All collected server data is collected here for convenience.
+   * @return DataCollector containing all performance data.
    */
   public static DataCollector getData() {
     return data;
   }
-
+  
+  /**
+   * Set the XML String to be sent back to clients.
+   * @param data XML data to be set.
+   */
   public static void setXmlData(String data) {
     xmlData = data;
   }
-
+  
+  /**
+   * Get the performance data stored in an XML encoded String
+   * @return String of XML data.
+   */
   public static String getXmlData() {
     return xmlData;
   }
-
+  
+  /**
+   * Get the XML access password.
+   * @return 
+   */
   public static String getPassword() {
     return accessPassword;
   }
-
+  
+  /**
+   * Get the TickPoller which collects ticks per second.
+   * @return TickPoller
+   */
   public TickPoller getTickPoller() {
     return tickPoller;
   }
 
   /**
    * Time in milliseconds of last hearing from main thread.
-   * 
-   * Considering that the HttpThread doesn't die, it can compare the last time.
+   *
+   * Considering that the HttpServer doesn't die, it can compare the last time.
    */
   public static long getHeartbeatTime() {
     return heartBeatTime;
@@ -147,26 +173,25 @@ public class MineloadPlugin extends JavaPlugin {
   /**
    * Time it took to complete one tick.
    *
-   * @return
+   * @return tickTIme
    */
   public static long getTickTime() {
     return tickTime;
   }
 
   /**
-   * Returns true if debugging is enabled
-   *
+   * Returns true if plugin debugging is enabled
    * @return boolean debug
    */
   public static boolean debug() {
     return debug;
   }
   
-  public Database getDB(){
-    return this.database;
-  }
-  
-  public static MineloadPlugin getMineload(){
+  /**
+   * Get the live running instance of Mineload
+   * @return MineloadPlugin
+   */
+  public static MineloadPlugin getMineload() {
     return (MineloadPlugin) Bukkit.getServer().getPluginManager().getPlugin("MineloadPlugin");
   }
 }

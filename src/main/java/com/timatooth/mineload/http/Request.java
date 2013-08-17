@@ -7,10 +7,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * HttpRequests are generated from new client connections. They contain, GET,
- * POST, cookie information.
+ * HttpRequests are generated from new client connections. 
+ * They contain, GET, POST, cookie information.
  *
- * @author tim
+ * @author Tim Sullivan
  */
 public class Request {
 
@@ -31,7 +31,14 @@ public class Request {
   /* Remote address of agent */
   private String remoteAddr;
   private Socket connection;
-
+  
+  /**
+   * Requests are generated when a HTTP request is made.
+   * @param type either GET/POST supported
+   * @param url requested by user agent
+   * @param httpVersion http version client supports most likely HTTP/1.1 99.99%
+   * @param connection reference to active socket connection with user agent
+   */
   public Request(String type, String url, String httpVersion, Socket connection) {
     this.requestType = type;
     this.url = url;
@@ -65,30 +72,33 @@ public class Request {
    */
   public void setHeaders(Map<String, String> headers) {
     this.headers = headers;
-    //parseGet();
-    if (this.requestType.equalsIgnoreCase("post")) {
-      parsePost();
-    }
     parseCookies();
   }
-
+  /**
+   * Process the cookie header from agent and populate map of values.
+   */
   private void parseCookies() {
   }
-
-  private void parsePost() {
-    System.out.println("Parsing POST");
-  }
-
+  
+  /**
+   * Set the remote IP address of agent.
+   * @param add 
+   */
   public void setRemoteAddr(String add) {
     this.remoteAddr = add;
   }
-
+  
+  /**
+   * Get the request type eg GET or POST
+   * @return String either "GET" or "POST"
+   */
   public String getType() {
     return this.requestType;
   }
 
   /**
    * Parse the GET parameters in the request.
+   * populate hash map of values
    */
   private void parseGet() {
     this.get = new HashMap<String, String>();
@@ -142,19 +152,36 @@ public class Request {
   public String getUrl(){
     return this.url;
   }
-  
+  /**
+   * Set remote socket address of user agent to the request.
+   * @param socket 
+   */
   public void setSocket(Socket socket){
     this.connection = socket;
   }
   
+  /**
+   * Get the TCP socket connected to the user agent.
+   * @return Socket to user agent.
+   */
   public Socket getSocket(){
     return this.connection;
   }
   
+  /**
+   * Get value from HTTP headers.
+   * @param header header key to obtain.
+   * @return value stored at key or null.
+   */
   public String getHeader(String header){
     return this.headers.get(header);
   }
   
+  /**
+   * Set the POST data for the request object.
+   * Called by Runner thread when reading incoming POST data.
+   * @param post map of POST data.
+   */
   public void setPost(Map<String, String> post){
     this.post = post;
   }

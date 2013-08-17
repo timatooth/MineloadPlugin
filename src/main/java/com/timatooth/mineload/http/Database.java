@@ -30,7 +30,9 @@ public class Database {
   private Driver driver;
   private Connection con;
   private Properties settings;
-
+  /**
+   * Create database object for interacting with H2/MySQL databases.
+   */
   public Database() {
     initDriver();
     settings = new Properties();
@@ -46,6 +48,7 @@ public class Database {
         settings.put("user", config.getString("mysql.username"));
         settings.put("password", config.getString("mysql.password"));
         settings.put("autoReconnect", "true");
+        settings.put("autocommit", "false");
         con = driver.connect("jdbc:mysql://" + config.getString("mysql.host") + ":" + config.getInt("mysql.port") + "/mineload", settings);
       }
 
@@ -98,7 +101,9 @@ public class Database {
       se.printStackTrace();
     }
   }
-
+  /**
+   * Downloads database driver and loads it into the classpath.
+   */
   private void initDriver() {
     File libdir = new File("plugins/MineloadPlugin/lib");
     if (!libdir.exists()) {
@@ -119,7 +124,7 @@ public class Database {
     //yeah this bit isn't complicated ae...
     if (!lib.exists()) {
       try {
-        System.out.println("Mineload: "+engine + " Database Driver not here. Downloading it. Please be excited...");
+        System.out.println("Mineload: " + engine + " Database Driver not here. Downloading it. Please be excited...");
         if (engine.equalsIgnoreCase("h2")) {
           URL website = new URL("http://repo2.maven.org/maven2/com/h2database/h2/1.3.173/h2-1.3.173.jar");
           ReadableByteChannel rbc = Channels.newChannel(website.openStream());
@@ -178,7 +183,10 @@ public class Database {
     }
 
   }
-
+  /**
+   * Get active database connection for queries.
+   * @return Connection to SQL server.
+   */
   public Connection getConnection() {
     return con;
   }

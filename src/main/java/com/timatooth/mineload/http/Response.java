@@ -8,16 +8,16 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Response objects are sent to the client over a connection. They contain
- * certain header information, content, setcookies etc.
+ * Response objects are sent to the client over a connection.
+ * They contain certain header information, content, set cookies etc.
  *
- * @author tim
+ * @author Tim Sullivan
  */
 public class Response {
 
   /* Header information to send back */
   protected Map<String, String> headers;
-  /* Text content to be sent */
+  /* Raw content to be sent */
   protected byte[] content;
   /* Context of response stored in request */
   protected Request request;
@@ -25,7 +25,12 @@ public class Response {
   protected int code = 200;
   /* Status of response */
   protected String status = "OK";
-
+  
+  /**
+   * Create a Response to sent back to user agent.
+   * @param request Contains context including remote connection.
+   * @param content Raw data to sent back in the Body or the response.
+   */
   public Response(Request request, byte[] content) {
     this.request = request;
     this.content = content;
@@ -37,8 +42,8 @@ public class Response {
   /**
    * Set the code and status of http response. By default it's 200 OK.
    *
-   * @param code
-   * @param status
+   * @param code HTTP code to send back eg 404.
+   * @param status Associated message with error code.
    */
   public void setStatus(int code, String status) {
     this.code = code;
@@ -47,11 +52,11 @@ public class Response {
 
   /**
    * Send the response to the client.
+   * Called by runner thread.
    */
   public void send() {
     try {
       OutputStream os = request.getSocket().getOutputStream();
-      //OutputStreamWriter w = new OutputStreamWriter(os);
       BufferedOutputStream bos = new BufferedOutputStream(os);
       bos.write(("HTTP/1.1 " + code + " " + status + "\r\n").getBytes());
       Set<String> headerKeys = headers.keySet();
@@ -60,8 +65,7 @@ public class Response {
         bos.write((key + ": " + headers.get(key) + "\r\n").getBytes());
       }
       
-      bos.write("\r\n".getBytes()); //blank line
-      //w.flush();
+      bos.write("\r\n".getBytes());
       for (byte b : this.content) {
         bos.write(b);
       }
@@ -74,7 +78,7 @@ public class Response {
 
   }
   /**
-   * Set the raw bytes of the content to be sent.
+   * Set the raw bytes to be contained in the response.
    * @param content bytes of content to be sent.
    */
   public void setContent(byte[] content) {

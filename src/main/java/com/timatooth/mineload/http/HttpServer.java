@@ -12,8 +12,8 @@ import java.util.logging.Logger;
  * Class listens on a specified port accepting new connections. New connections
  * are started in a new thread.
  *
- * Ideas: - Set global limit of running connections/threads.
- *        - Use a thread pool using Executors.
+ * Ideas: - Set global limit of running connections/threads. - Use a thread pool
+ * using Executors.
  *
  * @author Tim Sullivan
  */
@@ -52,26 +52,28 @@ public class HttpServer extends Thread {
     } catch (IOException ioe) {
       ioe.printStackTrace();
     }
-    
+
     database = new Database();
-    
+
     //set initial state to running.
     keepRunning = true;
   }
 
   /**
-   * Set the state of the listener thread. HttpServer thread should terminate when
-   * ready and no longer accept new connections.
+   * Set the state of the listener thread. HttpServer thread should terminate
+   * when ready and no longer accept new connections.
    *
    * @param state set to false to disable listener.
    */
   public synchronized void setRunning(boolean state) {
     this.keepRunning = state;
-    if(!state){
+    if (!state) {
       try {
         this.serverSocket.close();
         try {
-          database.getConnection().commit();
+          if (!database.getConnection().getAutoCommit()) {
+            database.getConnection().commit();
+          }
           database.getConnection().close();
         } catch (SQLException ex) {
           Logger.getLogger(HttpServer.class.getName()).log(Level.SEVERE, null, ex);
@@ -98,7 +100,7 @@ public class HttpServer extends Thread {
           newThread.start();
         } catch (SocketException se) {
           //socket now closed due to reload.
-        } catch (IOException ioe){
+        } catch (IOException ioe) {
           ioe.printStackTrace();
         }
       }
@@ -121,20 +123,22 @@ public class HttpServer extends Thread {
   public synchronized void updateConnectionCount() {
     this.threadCount--;
   }
-  
+
   /**
    * Get Scheduler to register new Views.
-   * @return 
+   *
+   * @return
    */
-  public static synchronized HttpScheduler getScheduler(){
+  public static synchronized HttpScheduler getScheduler() {
     return scheduler;
   }
-  
+
   /**
    * Get the global SQL database instance.
+   *
    * @return Database
    */
-  public static Database getDB(){
+  public static Database getDB() {
     return database;
   }
 }

@@ -1,8 +1,6 @@
 package com.timatooth.mineload;
 
 import com.timatooth.mineload.http.HttpServer;
-import java.math.BigDecimal;
-import java.math.MathContext;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -52,40 +50,78 @@ public class DataCollector {
     memUsed = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1048576;
     memMax = Runtime.getRuntime().maxMemory() / 1048576;
   }
-
+  
+  /**
+   * Get the servers tick rate.
+   * Should normally be 20tps.
+   * @return tickrate as float
+   */
   public float getTPS() {
     return tps;
   }
-
+  
+  /**
+   * Maximum amount of players supported by server.
+   * @return maxPlayers
+   */
   public int getMaxPlayers() {
     return maxPlayers;
 
   }
-
+  
+  /**
+   * Get current players online.
+   * @return playerCount
+   */
   public int getPlayerCount() {
     return playerCount;
   }
-
+  
+  /**
+   * Get memory used by this Java Virtual Machine.
+   * @return memUsed in MB.
+   */
   public long getMemoryUsed() {
     return memUsed;
   }
-
+  
+  /**
+   * Get the Maximum memory allocated to the Java Virtual Machine.
+   * @return memMax in MB
+   */
   public long getMaxMemory() {
     return memMax;
   }
-
+  
+  /**
+   * Get total unique player count.
+   * How many unique player names that have ever joined.
+   * @return totalPlayers
+   */
   public long getTotalPlayers() {
     return totalPlayers;
   }
-
+  
+  /**
+   * Get the Message Of the Day assined from server.properties.
+   * @return motd as a String.
+   */
   public String getMotd() {
     return motd;
   }
   
+  /**
+   * Network transmission data.
+   * @return NetworData object.
+   */
   public NetworkData getNetwork(){
     return network;
   }
   
+  /**
+   * Saves data in this class to a SQL database.
+   * Should be *really* be moved to a scheduler to change save rate.
+   */
   private void commitSQL(){
     Connection con = HttpServer.getDB().getConnection();
     try {

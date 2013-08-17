@@ -8,7 +8,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,7 +33,10 @@ public class AssetManager {
     MIME.put("svg", "image/svg+xml");
     MIME.put("zip", "application/zip");
   }
-
+  /**
+   * Create an AssetManager for a certain namespace.
+   * @param namespace 
+   */
   public AssetManager(String namespace) {
     this.namespace = namespace;
   }

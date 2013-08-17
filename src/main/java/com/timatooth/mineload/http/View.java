@@ -4,7 +4,9 @@ package com.timatooth.mineload.http;
  * Views are called when the pattern it's registered with matches a Request.
  * Simply implement this class and register it with the HttpScheduler. Response
  * is returned to HTTP client.
- * @author tim
+ * 
+ * @author Tim Sullivan
+ * @since MineloadPlugin 0.0.7
  */
 public interface View {
   /**
