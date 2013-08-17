@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,6 +29,8 @@ public class HttpServer extends Thread {
   private int connectionLimit;
   /* HttpScheduler stores collection of Views */
   private static HttpScheduler scheduler;
+  /* SQL Database connection */
+  private static Database database;
 
   /**
    * Create the Http HttpServer on specified port. Creates Http runtime threads
@@ -49,6 +52,9 @@ public class HttpServer extends Thread {
     } catch (IOException ioe) {
       ioe.printStackTrace();
     }
+    
+    database = new Database();
+    
     //set initial state to running.
     keepRunning = true;
   }
@@ -64,6 +70,12 @@ public class HttpServer extends Thread {
     if(!state){
       try {
         this.serverSocket.close();
+        try {
+          database.getConnection().commit();
+          database.getConnection().close();
+        } catch (SQLException ex) {
+          Logger.getLogger(HttpServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
       } catch (IOException ex) {
         Logger.getLogger(HttpServer.class.getName()).log(Level.SEVERE, "Socket did not close cleanly.", ex);
       }
@@ -116,5 +128,13 @@ public class HttpServer extends Thread {
    */
   public static synchronized HttpScheduler getScheduler(){
     return scheduler;
+  }
+  
+  /**
+   * Get the global SQL database instance.
+   * @return Database
+   */
+  public static Database getDB(){
+    return database;
   }
 }

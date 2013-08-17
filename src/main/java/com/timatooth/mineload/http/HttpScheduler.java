@@ -1,6 +1,7 @@
 package com.timatooth.mineload.http;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -43,9 +44,9 @@ public class HttpScheduler {
    */
   public Response runView(Request request) {
     Set<Pattern> urlpatterns = views.keySet();
-    for (Pattern pat : urlpatterns) {
+    for (Iterator<Pattern> it = urlpatterns.iterator(); it.hasNext();) {
+      Pattern pat = it.next();
       Matcher match = pat.matcher(request.getUrl());
-      
       if (match.matches()) {
         View matchedView = views.get(pat);
         //call view!

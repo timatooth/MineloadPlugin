@@ -1,9 +1,11 @@
 package com.timatooth.mineload;
 
 import com.timatooth.mineload.http.HttpServer;
+import com.timatooth.mineload.http.Database;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mcstats.Metrics;
@@ -18,6 +20,7 @@ public class MineloadPlugin extends JavaPlugin {
   private static long tickTime;
   private static boolean debug;
   private HttpServer mineloadServer;
+  private Database database;
 
   @Override
   public void onEnable() {
@@ -62,26 +65,24 @@ public class MineloadPlugin extends JavaPlugin {
     }
 
     if (jsonapi != null && lwc != null) {
-      getLogger().log(Level.INFO, "LWC & JSONAPI found. Adding extra JSONAPI methods.");
       LWCJsonProvider lwcjson = new LWCJsonProvider();
     } else {
       getLogger().log(Level.INFO, "LWC or JSONAPI was not found. Not adding extra methods.");
     }
 
     //start the MineloadHTTPD server
-    getLogger().log(Level.INFO, "Starting mineloadHTTPD");
     mineloadServer = new HttpServer(getConfig().getInt("socket.port"));
     mineloadServer.start();
 
     Pattern pattern = Pattern.compile("^/mineload/?[\\w\\.\\-/]*$");
-    if (HttpServer.getScheduler().registerView(pattern, new MineloadWebView())) {
-      getLogger().log(Level.INFO, "URLPattern(MineloadWebView): {0} registered successfully!", pattern);
+    if (!HttpServer.getScheduler().registerView(pattern, new MineloadWebView())) {
+      getLogger().log(Level.INFO, "URLPattern(MineloadWebView): {0} registered unsuccessfully!", pattern);
     }
 
     //register XML view for original system. Keeping URL the same avoids breakage.
     Pattern rootPattern = Pattern.compile("^/$");
-    if (HttpServer.getScheduler().registerView(rootPattern, new MineloadXmlView())) {
-      getLogger().log(Level.INFO, "URLPattern(MineloadXMLView): {0} registered successfully!", rootPattern);
+    if (!HttpServer.getScheduler().registerView(rootPattern, new MineloadXmlView())) {
+      getLogger().log(Level.INFO, "URLPattern(MineloadXMLView): {0} registered unsuccessfully!", rootPattern);
     }
   }
 
@@ -97,15 +98,13 @@ public class MineloadPlugin extends JavaPlugin {
 
   private void loadConfig() {
     getConfig().options().copyDefaults(true);
-    //getConfig().addDefault("mysql.host", "localhost");
-    //getConfig().addDefault("mysql.port", "3306");
-    //getConfig().addDefault("mysql.username", "username");
-    //getConfig().addDefault("mysql.password", "password");
-    //getConfig().addDefault("mysql.database", "database");
-    //getConfig().addDefault("socket.enabled", "true");
-    //getConfig().addDefault("socket.address", "");
+    getConfig().addDefault("database.engine", "h2");
+    getConfig().addDefault("mysql.host", "localhost");
+    getConfig().addDefault("mysql.port", 3306);
+    getConfig().addDefault("mysql.username", "mineload");
+    getConfig().addDefault("mysql.password", "mineload");
+    getConfig().addDefault("mysql.database", "mineload");
     getConfig().addDefault("socket.port", 25500);
-    //getConfig().addDefault("polling.interval", "40");
     getConfig().addDefault("password", "changemenow539");
     getConfig().addDefault("debug", false);
     this.saveConfig();
@@ -161,5 +160,13 @@ public class MineloadPlugin extends JavaPlugin {
    */
   public static boolean debug() {
     return debug;
+  }
+  
+  public Database getDB(){
+    return this.database;
+  }
+  
+  public static MineloadPlugin getMineload(){
+    return (MineloadPlugin) Bukkit.getServer().getPluginManager().getPlugin("MineloadPlugin");
   }
 }
