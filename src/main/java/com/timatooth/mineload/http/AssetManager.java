@@ -20,7 +20,6 @@ public class AssetManager {
 
   public static final Map<String, String> MIME = new HashMap<String, String>();
   public static File rootDir = new File("plugins/MineloadPlugin/www");
-  private String namespace;
 
   static {
     MIME.put("css", "text/css");
@@ -33,13 +32,6 @@ public class AssetManager {
     MIME.put("svg", "image/svg+xml");
     MIME.put("zip", "application/zip");
   }
-  /**
-   * Create an AssetManager for a certain namespace.
-   * @param namespace 
-   */
-  public AssetManager(String namespace) {
-    this.namespace = namespace;
-  }
 
   /**
    * Open the contents of a file as String.
@@ -47,7 +39,7 @@ public class AssetManager {
    * @param filename Filename relative to inside its own folder.
    * @return String contents of file.
    */
-  public byte[] loadAsset(String filename) throws FileNotFoundException {
+  public static byte[] loadAsset(String filename) throws FileNotFoundException {
     File path = new File(rootDir, filename);
     //File path = new File(prepath, filename);
     if (path.isDirectory()) {

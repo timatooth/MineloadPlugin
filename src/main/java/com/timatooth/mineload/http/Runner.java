@@ -74,7 +74,7 @@ class Runner implements Runnable {
 
           if (request.getType().equals("GET")) {
             Response res = HttpServer.getScheduler().runView(request);
-            res.send();
+            res.deliverTheBusiness();
             break;
           } else if (request.getType().equals("POST")) {
             postflag = true;
@@ -115,7 +115,7 @@ class Runner implements Runnable {
         }
         request.setPost(post);
         Response res = HttpServer.getScheduler().runView(request);
-        res.send();
+        res.deliverTheBusiness();
       }
 
       this.connection.close();

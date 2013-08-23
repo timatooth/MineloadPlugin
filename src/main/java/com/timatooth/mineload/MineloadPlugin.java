@@ -1,7 +1,6 @@
 package com.timatooth.mineload;
 
 import com.timatooth.mineload.http.HttpServer;
-import com.timatooth.mineload.http.Database;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
@@ -82,7 +81,7 @@ public class MineloadPlugin extends JavaPlugin {
     mineloadServer = new HttpServer(getConfig().getInt("socket.port"));
     mineloadServer.start();
 
-    Pattern pattern = Pattern.compile("^/mineload/?[\\w\\.\\-/]*$");
+    Pattern pattern = Pattern.compile("^/mineload/?([\\w\\.\\-/]*)$");
     if (!HttpServer.getScheduler().registerView(pattern, new MineloadWebView())) {
       getLogger().log(Level.INFO, "URLPattern(MineloadWebView): {0} registered unsuccessfully!", pattern);
     }

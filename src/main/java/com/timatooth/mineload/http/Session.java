@@ -9,14 +9,14 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Session information stored for each client. 
- * Contains a map of key values for storing information such as usernames,
- * logged in status etc. This information needs to be preserved on a database.
+ * Session information stored for each client. Contains a map of key values for
+ * storing information such as usernames, logged in status etc. This information
+ * needs to be preserved on a database.
  *
- * @author tim
+ * @author Tim Sullivan
  */
 public class Session implements Serializable {
-  
+
   /* SessionID of user */
   private String sessionID;
   /* Data associated with session */
@@ -25,44 +25,61 @@ public class Session implements Serializable {
   private String ipAddress;
 
   /**
-   * Create a new session for person.
-   * Session is assigned a UUID and then immediately inserted into 
-   * the database.
+   * Create a new session for person. Session is assigned a UUID and then
+   * immediately inserted into the database.
    */
   public Session() {
     sessionID = UUID.randomUUID().toString();
     Connection con = HttpServer.getDB().getConnection();
-    try{
+    try {
       PreparedStatement ps = con.prepareStatement("INSERT INTO ml_sessions"
               + " (session_id) VALUES (?)");
       ps.setString(1, sessionID.toString());
       ps.executeUpdate();
-    } catch(SQLException se){
+    } catch (SQLException se) {
       se.printStackTrace();
     }
   }
-  
-  public Session(String seshid){
+
+  public Session(String seshid) {
     sessionID = seshid;
   }
-  
+
   /**
    * Set a key/value pair associated with session in the database.
+   *
    * @param key
-   * @param value 
+   * @param value
    */
-  public void setValue(String key, String value){
+  public void setValue(String key, String value) {
     Connection con = HttpServer.getDB().getConnection();
     try {
       PreparedStatement ps = con.prepareStatement("INSERT INTO ml_session_data"
-              + " (session_id, key, value) VALUES (?,?,?)");
+              + " (session_id, data_key, data_value) VALUES (?,?,?)");
       ps.setString(1, sessionID);
       ps.setString(2, key);
       ps.setString(3, value);
       ps.executeUpdate();
-    } catch(SQLException se){
+    } catch (SQLException se) {
       se.printStackTrace();
     }
+  }
+
+  public String getValue(String key) {
+    Connection con = HttpServer.getDB().getConnection();
+    try {
+      PreparedStatement ps = con.prepareStatement("SELECT * FROM ml_session_data"
+              + " WHERE session_id = ? AND data_key = ?");
+      ps.setString(1, sessionID);
+      ps.setString(2, key);
+      ResultSet rs = ps.executeQuery();
+      while(rs.next()){
+        return rs.getString("data_value");
+      }
+    } catch (SQLException se) {
+      se.printStackTrace();
+    }
+    return null;
   }
 
   /**
@@ -74,23 +91,27 @@ public class Session implements Serializable {
    */
   public static Session getSession(String sessionID) {
     Connection con = HttpServer.getDB().getConnection();
-    try{
+    try {
       PreparedStatement ps = con.prepareStatement("SELECT * FROM ml_sessions WHERE session_id = ?");
       ps.setString(1, sessionID);
       ResultSet rs = ps.executeQuery();
-      if(rs.getRow()!= 0){
+      int rowCount = 0;
+      while (rs.next()) {
+        rowCount++;
+      }
+      if (rowCount == 1) {
         return new Session(sessionID);
       } else {
         return null;
       }
-    } catch(SQLException se){
+    } catch (SQLException se) {
       se.printStackTrace();
     }
     return null;
   }
-  
+
   @Override
-  public String toString(){
+  public String toString() {
     return this.sessionID;
   }
 }

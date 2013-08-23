@@ -22,8 +22,8 @@ import java.util.zip.ZipInputStream;
 import org.bukkit.configuration.file.FileConfiguration;
 
 /**
- *
- * @author tim
+ * Creates connection to DB and handles driver.
+ * @author Tim Sullivan
  */
 public class Database {
 
@@ -48,7 +48,6 @@ public class Database {
         settings.put("user", config.getString("mysql.username"));
         settings.put("password", config.getString("mysql.password"));
         settings.put("autoReconnect", "true");
-        settings.put("autocommit", "false");
         con = driver.connect("jdbc:mysql://" + config.getString("mysql.host") + ":" + config.getInt("mysql.port") + "/mineload", settings);
       }
 

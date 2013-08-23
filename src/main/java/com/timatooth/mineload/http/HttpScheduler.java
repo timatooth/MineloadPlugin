@@ -50,6 +50,12 @@ public class HttpScheduler {
       if (match.matches()) {
         View matchedView = views.get(pat);
         //call view!
+        request.setPattern(pat);
+        if(match.groupCount() > 0){
+          request.setUrl(match.group(1));
+        } else {
+          request.setUrl("");
+        }
         return matchedView.handle(request);
       }
     }
