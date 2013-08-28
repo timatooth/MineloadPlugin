@@ -1,7 +1,7 @@
 package com.timatooth.mineload.http;
 
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -17,7 +17,7 @@ public class HttpScheduler {
   private Map<Pattern, View> views;
 
   public HttpScheduler() {
-    views = new HashMap<Pattern, View>();
+    views = new LinkedHashMap<Pattern, View>();
   }
 
   /**

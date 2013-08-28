@@ -95,6 +95,19 @@ public class Database {
               + "tx BIGINT,"
               + "rx BIGINT"
               + ")").execute();
+      
+      con.prepareStatement("CREATE TABLE IF NOT EXISTS ml_groups ("
+              + "group_id INT PRIMARY KEY AUTO_INCREMENT,"
+              + "group_name VARCHAR(255),"
+              + "jsonapi_user VARCHAR(255),"
+              + "jsonapi_password VARCHAR(255)"
+              + ")").execute();
+      
+      con.prepareStatement("CREATE TABLE IF NOT EXISTS ml_options ("
+              + "option_id INT PRIMARY KEY AUTO_INCREMENT,"
+              + "option_name VARCHAR(255),"
+              + "option_value VARCHAR(6000)"
+              + ")").execute();
 
     } catch (SQLException se) {
       se.printStackTrace();

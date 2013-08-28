@@ -10,8 +10,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.mcstats.Metrics;
 
 /**
- * MineloadPlugin Main class.
- * Contains main entry point onEnable().
+ * MineloadPlugin Main class. Contains main entry point onEnable().
+ *
  * @author Tim Sullivan
  */
 public class MineloadPlugin extends JavaPlugin {
@@ -25,7 +25,7 @@ public class MineloadPlugin extends JavaPlugin {
   private static long tickTime;
   private static boolean debug;
   private HttpServer mineloadServer;
-  
+
   /**
    * Starting method
    */
@@ -80,17 +80,15 @@ public class MineloadPlugin extends JavaPlugin {
     //start the MineloadHTTPD server
     mineloadServer = new HttpServer(getConfig().getInt("socket.port"));
     mineloadServer.start();
-
-    Pattern pattern = Pattern.compile("^/mineload/?([\\w\\.\\-/]*)$");
-    if (!HttpServer.getScheduler().registerView(pattern, new MineloadWebView())) {
-      getLogger().log(Level.INFO, "URLPattern(MineloadWebView): {0} registered unsuccessfully!", pattern);
-    }
-
-    //register XML view for original system. Keeping URL the same avoids breakage.
+    //Order here matters. Priority of first in first found.
+    Pattern dataPattern = Pattern.compile("^/mineload/data/?([\\w\\.\\-/]*)$");
+    HttpServer.getScheduler().registerView(dataPattern, new MineloadDataView());
+    Pattern webPattern = Pattern.compile("^/mineload/?([\\w\\.\\-/]*)$");
+    HttpServer.getScheduler().registerView(webPattern, new MineloadWebView());
+    //register XML view for original 0.0.6 system. Keeping URL the same avoids breakage.
     Pattern rootPattern = Pattern.compile("^/$");
-    if (!HttpServer.getScheduler().registerView(rootPattern, new MineloadXmlView())) {
-      getLogger().log(Level.INFO, "URLPattern(MineloadXMLView): {0} registered unsuccessfully!", rootPattern);
-    }
+    HttpServer.getScheduler().registerView(rootPattern, new MineloadXmlView());
+    
   }
 
   @Override
@@ -102,7 +100,7 @@ public class MineloadPlugin extends JavaPlugin {
     mineloadServer.setRunning(false);
     mineloadServer.interrupt();
   }
-  
+
   /**
    * Set up default configuration options.
    */
@@ -122,38 +120,43 @@ public class MineloadPlugin extends JavaPlugin {
 
   /**
    * All collected server data is collected here for convenience.
+   *
    * @return DataCollector containing all performance data.
    */
   public static DataCollector getData() {
     return data;
   }
-  
+
   /**
    * Set the XML String to be sent back to clients.
+   *
    * @param data XML data to be set.
    */
   public static void setXmlData(String data) {
     xmlData = data;
   }
-  
+
   /**
    * Get the performance data stored in an XML encoded String
+   *
    * @return String of XML data.
    */
   public static String getXmlData() {
     return xmlData;
   }
-  
+
   /**
    * Get the XML access password.
-   * @return 
+   *
+   * @return
    */
   public static String getPassword() {
     return accessPassword;
   }
-  
+
   /**
    * Get the TickPoller which collects ticks per second.
+   *
    * @return TickPoller
    */
   public TickPoller getTickPoller() {
@@ -180,14 +183,16 @@ public class MineloadPlugin extends JavaPlugin {
 
   /**
    * Returns true if plugin debugging is enabled
+   *
    * @return boolean debug
    */
   public static boolean debug() {
     return debug;
   }
-  
+
   /**
    * Get the live running instance of Mineload
+   *
    * @return MineloadPlugin
    */
   public static MineloadPlugin getMineload() {
