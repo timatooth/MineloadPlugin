@@ -19,7 +19,7 @@ public class MineloadWebView implements View {
       if (request.getSession() == null) { //if they aren't logged in.
         response.setHeader("Location", "login");
       } else { //display the panel!
-        response = Response.sendFile(request, "mineload/admin.html");
+        response = Response.sendFile(request, "Mineload/admin.html");
       }
     } else if (request.e("login")) { //requesting /login 
       if (request.post("loginform") != null) { // form submitted, check credentials
@@ -55,14 +55,14 @@ public class MineloadWebView implements View {
         }
       } else {
         //not sending POST, display form
-        response = Response.sendFile(request, "mineload/login.html");
+        response = Response.sendFile(request, "Mineload/login.html");
       }
     } else if (request.e("admin")) { //requesting /admin
       if(request.getSession() != null && request.getSession().getValue("mineload_authed").equals("true")){
-        response = Response.sendFile(request, "mineload/admin.html");
+        response = Response.sendFile(request, "Mineload/admin.html");
       }
     } else {
-      response = Response.sendFile(request, "mineload/" + request.getUrl());
+      response = Response.sendFile(request, "Mineload/" + request.getUrl());
     }
     return response;
   }
