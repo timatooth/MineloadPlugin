@@ -13,11 +13,12 @@ public class MineloadWebView implements View {
 
   @Override
   public Response handle(Request request) {
-    //System.out.println(request);
+    System.out.println("MineloadWebView handle() called.");
+    System.out.println(request);
     Response response = new Response(request);
     if (request.e("")) {
-      if (request.getSession() == null) { //if they aren't logged in.
-        response.setHeader("Location", "login");
+      if (false && request.getSession() == null) { //if they aren't logged in.
+        response.setHeader("Location", "login/");
       } else { //display the panel!
         response = Response.sendFile(request, "Mineload/admin.html");
       }
