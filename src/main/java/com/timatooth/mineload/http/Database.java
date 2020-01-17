@@ -41,7 +41,7 @@ public class Database {
 
     try {
       if (engine.equalsIgnoreCase("h2")) {
-        con = driver.connect("jdbc:h2:plugins/MineloadPlugin/mineload", settings);
+        con = driver.connect("jdbc:h2:./plugins/MineloadPlugin/mineload", settings);
 
       } else if (engine.equalsIgnoreCase("mysql")) {
         FileConfiguration config = MineloadPlugin.getMineload().getConfig();
@@ -127,7 +127,7 @@ public class Database {
     String engine = MineloadPlugin.getMineload().getConfig().getString("database.engine");
     File lib = null;
     if (engine.equals("h2")) {
-      lib = new File(libdir, "h2-1.3.173.jar");
+      lib = new File(libdir, "h2-1.4.200.jar");
     } else if (engine.equalsIgnoreCase("mysql")) {
       lib = new File(libdir, "mysql-connector-java-5.1.26-bin.jar");
     } else {
@@ -138,7 +138,7 @@ public class Database {
       try {
         System.out.println("Mineload: " + engine + " Database Driver not here. Downloading it. Please be excited...");
         if (engine.equalsIgnoreCase("h2")) {
-          URL website = new URL("http://repo2.maven.org/maven2/com/h2database/h2/1.3.173/h2-1.3.173.jar");
+          URL website = new URL("https://repo1.maven.org/maven2/com/h2database/h2/1.4.200/h2-1.4.200.jar");
           ReadableByteChannel rbc = Channels.newChannel(website.openStream());
           FileOutputStream fos = new FileOutputStream(lib);
           fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);

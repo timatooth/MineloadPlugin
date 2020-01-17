@@ -93,7 +93,7 @@ public class MineloadPlugin extends JavaPlugin {
 
   @Override
   public void onDisable() {
-    getServer().getScheduler().cancelAllTasks();
+    getServer().getScheduler().cancelTasks(this);
     serverPoller = null;
     tickPoller = null;
     getLogger().log(Level.INFO, "Stopping MineloadHTTPD");

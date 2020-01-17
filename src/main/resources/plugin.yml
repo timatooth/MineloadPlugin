@@ -1,6 +1,7 @@
 name: MineloadPlugin
-version: 0.0.8-devweb
-description: Generates Minecraft server performace in XML format.
+version: 0.1.0
+description: Generates Minecraft server performace data in XML format.
+api-version: 1.15
 
 author: Timatooth
 website: https://github.com/Timatooth/

@@ -48,6 +48,7 @@ public class HttpServer extends Thread {
 
     try {
       serverSocket = new ServerSocket(port);
+      serverSocket.setReuseAddress(true);
       threadCount++;
     } catch (IOException ioe) {
       ioe.printStackTrace();

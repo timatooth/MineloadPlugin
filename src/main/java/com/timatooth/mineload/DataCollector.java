@@ -41,7 +41,7 @@ public class DataCollector {
   public void update() {
     tps = plugin.getTickPoller().getAverageTPS();
     loadMemory();
-    playerCount = server.getOnlinePlayers().length;
+    playerCount = server.getOnlinePlayers().size();
     network.update();
     commitSQL();
   }
