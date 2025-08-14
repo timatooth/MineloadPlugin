@@ -7,7 +7,6 @@ import java.util.regex.Pattern;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.mcstats.Metrics;
 
 /**
  * MineloadPlugin Main class. Contains main entry point onEnable().
@@ -54,16 +53,6 @@ public class MineloadPlugin extends JavaPlugin {
         tickTime = heartBeatTime - old;
       }
     }, 1, 20);
-
-    /*
-     * MCStats Plugin Metrics.
-     */
-    try {
-      Metrics metrics = new Metrics(this);
-      metrics.start();
-    } catch (IOException e) {
-      // Failed to submit the stats :-(
-    }
 
     Plugin jsonapi = getServer().getPluginManager().getPlugin("JSONAPI");
     Plugin lwc = getServer().getPluginManager().getPlugin("LWC");
